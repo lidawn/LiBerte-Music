@@ -1,0 +1,13 @@
+收藏一首歌曲
+
+http://www.xiami.com/music/tag/type/3/id/2076880?_xiamitoken=20f0e5a22def96dbe410f339a65e6600
+
+type 1 艺人
+type 2 专辑
+
+type 3 歌曲
+
+type 4 精选集
+
+id
+token 是标识个人
