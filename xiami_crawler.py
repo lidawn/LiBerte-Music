@@ -98,7 +98,7 @@ def get_real_url(luanma):
 	length = luanma.find('t',0)	
 	juzhen = []
 	a = len(luanma)
-	#####矩阵总行数
+	#矩阵总行数
 	if a%length :
 		line = a/length +1
 		yushu = length - a%length

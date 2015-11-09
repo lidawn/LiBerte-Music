@@ -1,6 +1,7 @@
 #coding:utf-8
 import requests
 from bs4 import BeautifulSoup as BS
+import re
 
 user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
 						AppleWebKit/537.36 (KHTML, like Gecko) 
@@ -81,7 +82,8 @@ class XiamiUser:
 			song_id = song_name_list[i].find('a').get('href')
 			song_id = song_id[song_id.rfind('/')+1:]
 			song_is_favored = True
-			if song_act_list[i].find('a').get('onclick').find('play'):
+			#print song_act_list[i].find('a').get('onclick').find('play')
+			if song_act_list[i].find('a').get('onclick').find('play') == 0:
 				song_is_playable = True
 			else:
 				song_is_playable = False
@@ -102,17 +104,100 @@ class Song:
 	def get_link(self):
 	 	url = 'http://www.xiami.com/song/playlist/id/'+self._id
 		xml = requests.get(url,headers=headers)
-		print xml.content
-		#pattern = re.compile(r'<location>(.*)</location>',re.S)
-		#result = pattern.findall(xml_result)
-		#luanma =  result[0]
-		#luanma =  luanma[1:]
-		#real_url = get_real_url(luanma)
-		#song['real_url'] = real_url
-			#print luanma
-			#print '\n'
-		#return list
+		#print xml.content
+		pattern = re.compile(r'<location>(.*)</location>',re.S)
+		result = pattern.findall(xml.content)
+		link_encode =  result[0]
+		link_encode =  link_encode[1:]
+		#解密乱码得到真实url
+		length_1 = link_encode.find('t',0)
+		length_2 = link_encode.find('t',length_1+1)
+		length_3 = link_encode.find('t',length_2+1)
+		if (length_2 - length_1) == length_1 or (length_2 - length_1) == (length_1 - 1):
+			length = length_1
+		else:
+			length = length_2 
+		juzhen = []
+		a = len(link_encode)
+		#矩阵总行数
+		if a%length :
+			line = a/length +1
+			yushu = length - a%length
+		else :
+			line = a/length
+			yushu = 0
+		start = 0
+		end = length
+		#余数
+		if yushu :
+			#行的长度不一致
+			#较长的行数
+			line_1 = line - yushu
+			i = line_1
+			#处理较长的行数
+			while i>0: 
+				juzhen.append(link_encode[start:end])
+				#a = a-length
+				start = end
+				end += length
+				i -= 1
+			#处理剩余行数
+			line_2 = line - line_1
+			end -=1
+			length -=1
+			i = line_2
+			while i>0 :
+				juzhen.append(link_encode[start:end])
+				start = end
+				end += length
+				i -= 1
+		else:
+			#行的长度一致
+			i = line
+			while i>0: 
+				juzhen.append(link_encode[start:end])
+				#a = a-length
+				start = end
+				end += length
+				i -= 1
+
+		real_url = ''
+		length = len(juzhen[0])
+		i = 0
+		#拼接为正确的url
+		while i<length:
+			j = 0
+			while j<line:
+				try:
+					#print juzhen[j][i]
+					real_url += juzhen[j][i]
+				except IndexError:
+					i = length
+					j = line
+					break
+				j += 1
+			i += 1
+
+		while 1 :
+			index = real_url.find('%')
+			if index == -1:
+				break
+			if real_url[index:index+3] == '%3A' :
+				real_url = real_url[0:index] + ':' + real_url[index+3:]
+			elif real_url[index:index+3] == '%2F' :
+				real_url = real_url[0:index] + '/' + real_url[index+3:]
+			elif real_url[index:index+3] == '%5E' :
+				real_url = real_url[0:index] + '0' + real_url[index+3:]
+			elif real_url[index:index+3] == '%3F' :
+				real_url = real_url[0:index] + '?' + real_url[index+3:]
+			elif real_url[index:index+3] == '%3D' :
+				real_url = real_url[0:index] + '=' + real_url[index+3:]
+
+		print real_url
+
 
 c = XiamiUser('lidawn1991@163.com','294833369','c')
-c.get_favor_song()
+s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
+s.get_link()
+#c.get_favor_song()
 		
