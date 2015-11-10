@@ -31,14 +31,14 @@ class NeteaseUser:
 		URL = 'http://music.163.com/api/search/get/'
 		post_data = {
 						's':keywords,
-						'limit': '5',
+						'limit': '100',
 						'sub': 'False',
 						'type': type,
 						'offset': '0'
 		}
 
 		resp = self.session.post(URL,data=post_data,cookies=cookies,headers=headers)
-		print '###song###'
+		#print '###song###'
 		results =  resp.json().get('result')
 		songs = results.get('songs')
 		count =  (lambda x,y: x if x<y else y)(results.get('songCount'),len(songs))
@@ -50,6 +50,7 @@ class NeteaseUser:
 			song_name = song.get('name').encode('utf-8')
 			album_id = song.get('album').get('id')
 			#print song ,'\n'
+			print song_id,album_id,song_name,song_is_favored,song_is_playable
 			song_list.append(Song(song_id,album_id,song_name,song_is_favored,song_is_playable))
 		return song_list
 
@@ -70,10 +71,10 @@ class Song:
 		songs = resp.json().get('album').get('songs')
 		for song in songs:
 			if song.get('id') == self._id:
-				print song.get('mp3Url')
+				return song.get('mp3Url')
 
 
 n = NeteaseUser('a','b','c')
-#n.search('我怀念的')
-s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
-s.get_link()
+n.search('我怀念的 孙燕姿 逆光')
+#s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
+#s.get_link()

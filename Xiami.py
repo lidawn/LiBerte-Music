@@ -119,8 +119,38 @@ class XiamiUser:
 	def set_favor_artist(self):
 		pass
 
-	def search(self):
-		URL = 'http://www.xiami.com/search?key='
+	def search(self,keywords):
+		return self.get_search_result('song',keywords)			#单曲
+		#self.get_search_result('album',keywords)			#专辑
+		#self.get_search_result('artist',keywords)		#歌手
+		#self.get_search_result('collect',keywords)		#歌单/精选集
+
+	def get_search_result(self,type,keywords):
+		#两个平台 用歌曲名，歌手，(专辑名)标识同一首歌
+		URL = 'http://www.xiami.com/search/%s?key=%s' % (type,keywords)
+		resp = self.session.get(URL,headers=headers)
+		content = BS(resp.content)
+		results = content.find('div',class_='search_result_box')
+		#搜索结果多少条,最多显示100条
+
+		count = results.find('b').string
+		print count
+		#print len(results.find_all('tbody'))
+		for result in results.find_all('tbody'):
+			for tr in result.find_all('tr'):
+				#每一个tr代表一首歌
+				song_is_playable = (lambda x : True if x is not None else False)(tr.find('td',class_='chkbox').find('input').get('checked'))
+				song_name = tr.find('td',class_='song_name').find('a').get('title')
+				song_album = tr.find('td',class_='song_album').find('a').get('title')
+				song_artist = tr.find('td',class_='song_artist').find('a').get('title')
+				if song_is_playable:
+					song_id = tr.find('td',class_='song_name').find('a').get('href')
+					song_id = song_id[song_id.rfind('/')+1:]
+				else:
+					#check(Netease)
+					pass
+
+		#print results
 
 class Song:
 	def __init__(self,id_,name,is_favored,is_playable):
@@ -225,7 +255,8 @@ class Song:
 
 
 c = XiamiUser('lidawn1991@163.com','294833369','c')
-s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
-print s.get_link()
+c.search('我怀念的')
+#s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
+#print s.get_link()
 #c.get_favor_song()
 		
