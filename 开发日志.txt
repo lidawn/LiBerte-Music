@@ -14,3 +14,8 @@ token 是标识个人
 
 
 能够登录虾米自有账户，并读取收藏歌曲。
+
+用mplayer播放
+https://github.com/baudm/mplayer.py
+http://www.mplayerhq.hu/design7/dload.html
+https://github.com/baudm/mplayer.py/blob/master/README.txt

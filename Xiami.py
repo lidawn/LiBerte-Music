@@ -21,18 +21,12 @@ class XiamiUser:
 	def login(self):
 		'''用虾米账号登录'''
 		URL = 'https://login.xiami.com/member/login'
-		user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
-						AppleWebKit/537.36 (KHTML, like Gecko) 
-						Chrome/46.0.2490.80 
-						Safari/537.36
-					'''
 		post_data = {'_xiamitoken':'20f0e5a22def96dbe410f339a65e6600',
 					'done':'http%3A%2F%2Fwww.xiami.com',
 					'from':'web',
 					'email':self._username,
 					'password':self._password,
 					'submit':'登 录'}
-
 		resp = self.session.post(URL,headers=headers,data=post_data)
 		#return session
 
@@ -84,8 +78,7 @@ class XiamiUser:
 		song_total = content.find('div',class_='all_page').find('span').string
 		song_total = song_total[song_total.find(u'共')+1 : -2]
 		#总页数
-		tp = lambda x : (x/25 + 1) if x % 25 else (x/25) 
-		page_total = tp(int(song_total))
+		page_total = (lambda x : (x/25 + 1) if x % 25 else (x/25))(int(song_total))
 		for p in range(page_total):
 			song_name_list = content.find_all('td',class_='song_name')
 			song_act_list = content.find_all('div',class_='song_do')
@@ -125,6 +118,9 @@ class XiamiUser:
 
 	def set_favor_artist(self):
 		pass
+
+	def search(self):
+		URL = 'http://www.xiami.com/search?key='
 
 class Song:
 	def __init__(self,id_,name,is_favored,is_playable):
@@ -229,7 +225,7 @@ class Song:
 
 
 c = XiamiUser('lidawn1991@163.com','294833369','c')
-#s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
-#s.get_link()
-c.get_favor_song()
+s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
+print s.get_link()
+#c.get_favor_song()
 		
