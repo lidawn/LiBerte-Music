@@ -127,28 +127,36 @@ class XiamiUser:
 
 	def get_search_result(self,type,keywords):
 		#两个平台 用歌曲名，歌手，(专辑名)标识同一首歌
-		URL = 'http://www.xiami.com/search/%s?key=%s' % (type,keywords)
-		resp = self.session.get(URL,headers=headers)
+		URL = 'http://www.xiami.com/search/%s/page/%d?key=%s' 
+		resp = self.session.get(URL % (type,1,keywords),headers=headers)
 		content = BS(resp.content)
 		results = content.find('div',class_='search_result_box')
 		#搜索结果多少条,最多显示100条
 
 		count = results.find('b').string
-		print count
-		#print len(results.find_all('tbody'))
-		for result in results.find_all('tbody'):
-			for tr in result.find_all('tr'):
-				#每一个tr代表一首歌
-				song_is_playable = (lambda x : True if x is not None else False)(tr.find('td',class_='chkbox').find('input').get('checked'))
-				song_name = tr.find('td',class_='song_name').find('a').get('title')
-				song_album = tr.find('td',class_='song_album').find('a').get('title')
-				song_artist = tr.find('td',class_='song_artist').find('a').get('title')
-				if song_is_playable:
-					song_id = tr.find('td',class_='song_name').find('a').get('href')
-					song_id = song_id[song_id.rfind('/')+1:]
-				else:
-					#check(Netease)
-					pass
+		count = (lambda x : x if x<100 else 100)(int(count))
+		page_total = (lambda x : (x/20 + 1) if x % 20 else (x/20))(count)
+		print page_total
+		for p in range(page_total):
+			for result in results.find_all('tbody'):
+				for tr in result.find_all('tr'):
+					#每一个tr代表一首歌
+					song_is_playable = (lambda x : True if x is not None else False)(tr.find('td',class_='chkbox').find('input').get('checked'))
+					song_name = tr.find('td',class_='song_name').find('a').get('title')
+					song_album = tr.find('td',class_='song_album').find('a').get('title')
+					song_artist = tr.find('td',class_='song_artist').find('a').get('title')
+					if song_is_playable:
+						song_id = tr.find('td',class_='song_name').find('a').get('href')
+						song_id = song_id[song_id.rfind('/')+1:]
+					else:
+						#check(Netease)
+						pass
+					print song_is_playable,song_name,song_album,song_artist
+			if p == page_total:
+				break
+			resp = self.session.get(URL%(type,p+2,keywords),headers=headers)
+			content = BS(resp.content)
+			results = content.find('div',class_='search_result_box')
 
 		#print results
 

@@ -1,7 +1,6 @@
 #coding:utf-8
 import requests
 from bs4 import BeautifulSoup as BS
-import md5
 
 user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
 						AppleWebKit/537.36 (KHTML, like Gecko) 
