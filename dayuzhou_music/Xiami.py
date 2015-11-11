@@ -165,7 +165,7 @@ class XiamiUser:
 					else:
 						song_artist = tr.find('td',class_='song_artist').find('a',target='_blank').string
 					if song_is_playable:
-						song_id = tr.find('td',class_='song_name').find('a').get('href')
+						song_id = tr.find('td',class_='song_name').find('a',target='_blank').get('href')
 						song_id = song_id[song_id.rfind('/')+1:]
 					else:
 						#check(Netease)
