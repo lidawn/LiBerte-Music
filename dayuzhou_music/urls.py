@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     url(r'search/','dayuzhou_music.search.search'),
-    url(r'search_result/','dayuzhou_music.search.search_result'),
+    url(r'get_link/','dayuzhou_music.song.get_link'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

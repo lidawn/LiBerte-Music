@@ -69,7 +69,7 @@ class XiamiUser:
 		#session = self.login()
 		resp = self._session.get(URL%1,headers=headers)
 		if 'login' in resp.url:
-			print 'not login'
+			#print 'not login'
 			self.login()
 			resp = self._session.get(URL%1,headers=headers)
 
@@ -93,7 +93,7 @@ class XiamiUser:
 					song_is_playable = True
 				else:
 					song_is_playable = False
-				print song_id,song_name,song_is_favored,song_is_playable
+				#print song_id,song_name,song_is_favored,song_is_playable
 				song = XiamiSong(song_id,song_name,song_is_favored,song_is_playable)
 				song_list.append(song)
 			if p == page_total:
@@ -130,6 +130,7 @@ class XiamiUser:
 	def get_search_result(cls,type,keywords):
 		#两个平台 用歌曲名，歌手，(专辑名)标识同一首歌
 		#返回一个字典列表，不创建对象
+		#要改成抓取所有歌曲，分页返回
 		search_results = []
 
 		URL = 'http://www.xiami.com/search/%s/page/%d?key=%s' 
@@ -140,7 +141,7 @@ class XiamiUser:
 		count = results.find('b').string
 		count = (lambda x : x if x<50 else 50)(int(count))
 		page_total = (lambda x : (x/20 + 1) if x % 20 else (x/20))(count)
-		print page_total
+		#print page_total
 		for p in range(page_total):
 			for result in results.find_all('tbody'):
 				for tr in result.find_all('tr'):
@@ -192,8 +193,9 @@ class XiamiSong:
 		self._is_favored = is_favored #是否已收藏
 		self._is_playable = is_playable #是否可播放
 
-	def get_link(self):
-	 	url = 'http://www.xiami.com/song/playlist/id/'+self._id
+	@classmethod
+	def get_link(cls,id_):
+	 	url = 'http://www.xiami.com/song/playlist/id/'+id_
 		xml = requests.get(url,headers=headers)
 		#print xml.content
 		pattern = re.compile(r'<location>(.*)</location>',re.S)

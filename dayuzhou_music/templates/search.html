@@ -3,34 +3,34 @@
 	<meta charset="UTF-8">
 	<title>搜索</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/soundmanager2.js"></script>
+	
 	<script type="text/javascript">
+	soundManager.setup({
+		url : "{{STATIC_URL}}swf/"
+ 	})
+
 	function play(is_playable,id,name,artist,album)
 	{
-		if(is_playable == 'True')
-		{
-
-		}
-		else
-		{
-
-		}
-	}
-	$(document).ready(function(){
-		$("#song_name").click(function(){
-			$.ajax({
-				type : "POST",
-				url : "/get_link/",
-				data : {},
-				data-type : "json",
-				success : function(ret){
-					play();
+		$.ajax({
+			type : "POST",
+			url : "/get_link/",
+			data : {is_playable:is_playable,id:id,name:name,artist:artist,album:album},
+			dataType : "text",
+			success : function(ret){
+				if(ret != "404")
+				{
+					var mySound = soundManager.createSound({
+						url : ret
+					});
+					mySound.play();
 				}
-			})
+			}
 		})
-	})
+	}
 	</script>
 </head>
 <body>
