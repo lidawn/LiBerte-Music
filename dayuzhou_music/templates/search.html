@@ -48,7 +48,7 @@
 		<th >艺人</th>
 		<th >专辑</th>
 		<th >来源</th>
-	<tr>
+	</tr>
 	{% for result in results %}
 	<tr>
 		<td><a href="#" onclick="play('{{result.song_is_playable}}',{{result.song_id}},'{{result.song_name}}','{{result.song_artist}}','{{result.song_album}}')">{{result.song_name}}</a></td>
