@@ -1,5 +1,4 @@
-
-<html lang="zh-CN">
+<html>
 <head>
 	<meta charset="UTF-8">
 	<title>搜索</title>
@@ -7,6 +6,32 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	function play(is_playable,id,name,artist,album)
+	{
+		if(is_playable == 'True')
+		{
+
+		}
+		else
+		{
+
+		}
+	}
+	$(document).ready(function(){
+		$("#song_name").click(function(){
+			$.ajax({
+				type : "POST",
+				url : "/get_link/",
+				data : {},
+				data-type : "json",
+				success : function(ret){
+					play();
+				}
+			})
+		})
+	})
+	</script>
 </head>
 <body>
 <div class="container" style="padding-top:10px;">
@@ -26,7 +51,7 @@
 	<tr>
 	{% for result in results %}
 	<tr>
-		<td><a href="#" onclick="">{{result.song_name}}</a></td>
+		<td><a href="#" onclick="play('{{result.song_is_playable}}',{{result.song_id}},'{{result.song_name}}','{{result.song_artist}}','{{result.song_album}}')">{{result.song_name}}</a></td>
 		<td>{{result.song_artist}}</td>
 		<td>{{result.song_album}}</td>
 		{% if result.song_is_playable %}

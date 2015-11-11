@@ -19,13 +19,15 @@ class NeteaseUser:
 		self._password = password
 		self._accountType = accountType
 
-	def search(self,keywords):
-		return self.get_search_result('1',keywords)			#单曲
+	@classmethod
+	def search(cls,keywords):
+		return cls.get_search_result('1',keywords)			#单曲
 		#self.get_search_result(10,keywords)			#专辑
 		#self.get_search_result(100,keywords)		#歌手
 		#self.get_search_result(1000,keywords)		#歌单
 
-	def get_search_result(self,type,keywords):
+	@classmethod
+	def get_search_result(cls,type,keywords):
 		song_list = []
 		URL = 'http://music.163.com/api/search/get/'
 		post_data = {
@@ -50,11 +52,11 @@ class NeteaseUser:
 			album_id = song.get('album').get('id')
 			#print song ,'\n'
 			print song_id,album_id,song_name,song_is_favored,song_is_playable
-			song_list.append(Song(song_id,album_id,song_name,song_is_favored,song_is_playable))
+			song_list.append(NeteaseSong(song_id,album_id,song_name,song_is_favored,song_is_playable))
 		return song_list
 
 
-class Song:
+class NeteaseSong:
 	session = requests.Session()
 	def __init__(self,id_,album_id,name,is_favored,is_playable):
 		self._id = id_
