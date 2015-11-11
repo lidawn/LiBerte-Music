@@ -12,11 +12,11 @@ headers = {'user-Agent':user_agent,'connection':'keep-alive'}
 
 class XiamiUser:
 	'''虾米用户'''
-	session = requests.Session()
 	def __init__(self,username,password,accountType):
 		self._username = username
 		self._password = password
 		self._accountType = accountType
+		self._session = requests.Session()
 
 	def login(self):
 		'''用虾米账号登录'''
@@ -27,7 +27,7 @@ class XiamiUser:
 					'email':self._username,
 					'password':self._password,
 					'submit':'登 录'}
-		resp = self.session.post(URL,headers=headers,data=post_data)
+		resp = self._session.post(URL,headers=headers,data=post_data)
 		#return session
 
 	def login_with_taobao(self):
@@ -45,14 +45,14 @@ class XiamiUser:
 					'submit':'登 录'}
 
 		#session = requests.Session()
-		resp = self.session.post(URL,headers=headers,data=post_data)
+		resp = self._session.post(URL,headers=headers,data=post_data)
 
 		print '###content###'
 		print resp.content.decode('utf-8')
 		print '###cookie###'
 		print resp.cookies
 		headers = {'user-Agent':self.user_agent,'connection':'keep-alive'}
-		resp = session.get('http://www.xiami.com/space/lib-song',headers=headers)
+		resp = _session.get('http://www.xiami.com/space/lib-song',headers=headers)
 		print '###session###'
 		#f = open('test.txt','a')
 		#f.writelines(resp.content)
@@ -60,18 +60,18 @@ class XiamiUser:
 		#print resp.content.decode('utf-8')
 		print resp.content
 		print '###session###'
-		print session.headers
+		#print session.headers
 
 	def get_favor_song(self):
 		'''获取收藏歌曲'''
 		song_list = []
 		URL = 'http://www.xiami.com/space/lib-song/page/%d'
 		#session = self.login()
-		resp = self.session.get(URL%1,headers=headers)
+		resp = self._session.get(URL%1,headers=headers)
 		if 'login' in resp.url:
 			print 'not login'
 			self.login()
-			resp = self.session.get(URL%1,headers=headers)
+			resp = self._session.get(URL%1,headers=headers)
 
 		content = BS(resp.content)
 		#获取总歌曲数
@@ -94,11 +94,11 @@ class XiamiUser:
 				else:
 					song_is_playable = False
 				print song_id,song_name,song_is_favored,song_is_playable
-				song = Song(song_id,song_name,song_is_favored,song_is_playable)
+				song = XiamiSong(song_id,song_name,song_is_favored,song_is_playable)
 				song_list.append(song)
 			if p == page_total:
 				break
-			resp = self.session.get(URL%(p+2),headers=headers)
+			resp = self._session.get(URL%(p+2),headers=headers)
 			content = BS(resp.content)
 		return song_list
 	
@@ -119,48 +119,73 @@ class XiamiUser:
 	def set_favor_artist(self):
 		pass
 
-	def search(self,keywords):
-		return self.get_search_result('song',keywords)			#单曲
+	@classmethod
+	def search(cls,keywords):
+		return cls.get_search_result('song',keywords)			#单曲
 		#self.get_search_result('album',keywords)			#专辑
 		#self.get_search_result('artist',keywords)		#歌手
 		#self.get_search_result('collect',keywords)		#歌单/精选集
 
-	def get_search_result(self,type,keywords):
+	@classmethod
+	def get_search_result(cls,type,keywords):
 		#两个平台 用歌曲名，歌手，(专辑名)标识同一首歌
+		#返回一个字典列表，不创建对象
+		search_results = []
+
 		URL = 'http://www.xiami.com/search/%s/page/%d?key=%s' 
-		resp = self.session.get(URL % (type,1,keywords),headers=headers)
+		resp = requests.get(URL % (type,1,keywords),headers=headers)
 		content = BS(resp.content)
 		results = content.find('div',class_='search_result_box')
-		#搜索结果多少条,最多显示100条
-
+		#搜索结果多少条,最多显示50条
 		count = results.find('b').string
-		count = (lambda x : x if x<100 else 100)(int(count))
+		count = (lambda x : x if x<50 else 50)(int(count))
 		page_total = (lambda x : (x/20 + 1) if x % 20 else (x/20))(count)
 		print page_total
 		for p in range(page_total):
 			for result in results.find_all('tbody'):
 				for tr in result.find_all('tr'):
 					#每一个tr代表一首歌
+					song = {}
 					song_is_playable = (lambda x : True if x is not None else False)(tr.find('td',class_='chkbox').find('input').get('checked'))
-					song_name = tr.find('td',class_='song_name').find('a').get('title')
-					song_album = tr.find('td',class_='song_album').find('a').get('title')
-					song_artist = tr.find('td',class_='song_artist').find('a').get('title')
+					song_name = tr.find('td',class_='song_name').find('a',target='_blank').find('b')
+					if song_name:
+						song_name = song_name.string
+					else:
+						song_name = tr.find('td',class_='song_name').find('a',target='_blank').string
+
+					song_album = tr.find('td',class_='song_album').find('a',target='_blank').find('b')
+					if song_album:
+						song_album = song_album.string
+					else:
+						song_album = tr.find('td',class_='song_album').find('a',target='_blank').string
+					song_artist = tr.find('td',class_='song_artist').find('a',target='_blank').string
+					if song_artist:
+						song_artist = song_artist.string
+					else:
+						song_artist = tr.find('td',class_='song_artist').find('a',target='_blank').string
 					if song_is_playable:
 						song_id = tr.find('td',class_='song_name').find('a').get('href')
 						song_id = song_id[song_id.rfind('/')+1:]
 					else:
 						#check(Netease)
-						pass
-					print song_is_playable,song_name,song_album,song_artist
+						song_id = '-1'
+					song = {
+					'song_id':song_id,
+					'song_is_playable':song_is_playable,
+					'song_name' : song_name,
+					'song_album' : song_album,
+					'song_artist' : song_artist
+					}
+					search_results.append(song)
 			if p == page_total:
 				break
-			resp = self.session.get(URL%(type,p+2,keywords),headers=headers)
+			resp = requests.get(URL%(type,p+2,keywords),headers=headers)
 			content = BS(resp.content)
 			results = content.find('div',class_='search_result_box')
 
-		#print results
+		return search_results
 
-class Song:
+class XiamiSong:
 	def __init__(self,id_,name,is_favored,is_playable):
 		self._id = id_
 		self._name = name
@@ -263,7 +288,7 @@ class Song:
 
 
 c = XiamiUser('lidawn1991@163.com','294833369','c')
-c.search('我怀念的')
+XiamiUser.search('我怀念的')
 #s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
 #print s.get_link()
 #c.get_favor_song()
