@@ -1,0 +1,55 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>首页</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/soundmanager2.js"></script>
+</head>
+<body>
+<div class="container" style="padding-top:10px;">
+	{% if results.hot_recommend %}
+	{% for hot_recommend in results.hot_recommend %}
+	<p>{{hot_recommend.image}}</p>
+	<p>{{hot_recommend.title}}</p>
+	<p>{{hot_recommend.id}}</p>
+	{% endfor %}
+	{% endif %}
+
+	{% if results.new_cd %}
+	{% for new_cd in results.new_cd %}
+	<p>{{new_cd.title}}</p>
+	<p>{{new_cd.id}}</p>
+	<p>{{new_cd.artist}}</p>
+	<p>{{new_cd.artist_id}}</p>
+	{% endfor %}
+	{% endif %}
+
+
+
+
+
+	
+	{% if results.hot_recommend %}
+	{% for hot_recommend in results.hot_recommend %}
+	<p>{{hot_recommend.image}}</p>
+	<p>{{hot_recommend.title}}</p>
+	<p>{{hot_recommend.id}}</p>
+	{% endfor %}
+	{% endif %}
+
+	{% if results.new_cd %}
+	{% for new_cd in results.new_cd %}
+	<p>{{new_cd.title}}</p>
+	<p>{{new_cd.id}}</p>
+	<p>{{new_cd.artist}}</p>
+	<p>{{new_cd.artist_id}}</p>
+	{% endfor %}
+	{% endif %}
+
+	
+</div>
+</body>
+</html>

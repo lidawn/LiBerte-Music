@@ -12,11 +12,16 @@ headers = {'user-Agent':user_agent,'connection':'keep-alive'}
 
 class XiamiUser:
 	'''虾米用户'''
+	hot_recommend = []		#精选集
+	new_cd = []				#新碟首发
+	daxia = []				#大虾推荐
+	#http://www.xiami.com/index/recommend  猜你喜欢
 	def __init__(self,username,password,accountType):
 		self._username = username
 		self._password = password
 		self._accountType = accountType
 		self._session = requests.Session()
+		self._personal_customized = []			#猜你喜欢
 
 	def login(self):
 		'''用虾米账号登录'''
@@ -186,6 +191,85 @@ class XiamiUser:
 
 		return search_results
 
+	@classmethod
+	def get_discover(cls):
+		cls.hot_recommend = []
+		cls.new_cd = []
+		cls.daxia = []
+
+		URL = 'http://www.xiami.com'
+		resp = requests.get(URL,headers=headers)
+		content = BS(resp.content)
+		cd_list = content.find('div',id='albums').find('div',class_='content_block').find_all('div',class_='album')
+		for cd in cd_list:
+			a = cd.find('div',class_='info').find_all('p')
+			title = a[0].find('a').string
+			id_ = a[0].find('a').get('href')[7:]
+			artist = a[1].find('a').string
+			artist_id = a[1].find('a').get('href')[8:]
+			result = {
+				'title' : title,
+				'id' : id_,
+				'artist' : artist,
+				'artist_id' : artist_id
+			}
+			cls.new_cd.append(result)
+
+		URL = 'http://www.xiami.com/index/collect'
+		resp = requests.get(URL,headers=headers)
+		content = BS(resp.json().get('data').get('collect'))
+	
+		hot_list = content.find_all('div',class_='collect')
+		for hot in hot_list:
+			image = hot.find('div',class_='image').find('img').get('src')
+			a = hot.find('div',class_='info').find('p',class_='name').find('a')
+			title = a.string
+			id_ = a.get('href')[9:]
+			result = {
+				'image' : image,
+				'title' : title,
+				'id' : id_
+			}
+			cls.hot_recommend.append(result)
+		#大虾
+		content = BS(resp.json().get('data').get('charts'))
+		daxia_list = content.find('table').find_all('tr')
+		for daxia in daxia_list:
+			if daxia.get('data-index',None) is None:
+				continue
+			a = daxia.find('td',class_='song_block').find_all('p')
+			name = a[0].find('a').string
+			id_ = a[0].find('a').get('href')[6:]
+			artist = a[1].find('a').string
+			reason = daxia.find('td',class_='common_block').find('p').string
+			time = daxia.find('td',class_='time_block').find('p').string
+			result = {
+				'name' : name,
+				'id' : id_,
+				'artist' : artist,
+				'reason' : reason,
+				'time' : time
+			}
+			cls.daxia.append(result)
+		#customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li')
+		##print customized_list
+		#for customized in customized_list:
+		#	if customized.get('data-res-action',None) is None:
+		#		continue 
+		#	image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
+		#	a = customized.find('p',class_='dec f-brk').find('a')
+		#	title = a.string
+		#	id_ = a.get('href')[a.get('href').find('=')+1:]
+		#	description = customized.find('p',class_='idv f-brk s-fc4').get('title')
+		#	result = {
+		#		'image' : image,
+		#		'title' : title,
+		#		'id' : id_,
+		#		'description' : description
+		#	}
+		#	self._personal_customized.append(result)
+		#print resp.content
+
 class XiamiSong:
 	def __init__(self,id_,name,is_favored,is_playable):
 		self._id = id_
@@ -290,7 +374,7 @@ class XiamiSong:
 
 
 c = XiamiUser('lidawn1991@163.com','294833369','c')
-XiamiUser.search('我怀念的')
+XiamiUser.get_discover()
 #s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
 #print s.get_link()
 #c.get_favor_song()

@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'search/','dayuzhou_music.search.search'),
     url(r'get_link/','dayuzhou_music.song.get_link'),
+    url(r'^$','dayuzhou_music.views.index'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

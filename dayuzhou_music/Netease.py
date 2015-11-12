@@ -14,10 +14,16 @@ cookies = {'appver':'1.5.2'}
 class NeteaseUser:
 	'''网易用户'''
 	session = requests.Session()
+	hot_recommend = []		#热门推荐    #后面个性定制五个标签
+	new_cd = []				#新碟上架
 	def __init__(self,username,password,accountType):
 		self._username = username
 		self._password = password
 		self._accountType = accountType
+		self._personal_customized = []	#个性化推荐
+
+	def get_personal_customized(self):
+		return self._personal_customized
 
 	@classmethod
 	def search(cls,keywords):
@@ -63,6 +69,62 @@ class NeteaseUser:
 			song_list.append(song_result)
 		return song_list
 
+	@classmethod
+	def get_discover(cls):
+		cls.hot_recommend = []
+		cls.new_cd = []
+
+		URL = 'http://music.163.com/discover'
+		resp = requests.get(URL,headers=headers)
+		content = BS(resp.content)
+		hot_list = content.find('ul',class_='m-cvrlst f-cb').find_all('li')
+		for hot in hot_list:
+			image = hot.find('div',class_='u-cover u-cover-1').find('img').get('src')
+			a = hot.find('p',class_='dec').find('a')
+			title = a.get('title')
+			id_ = a.get('href')[a.get('href').find('=')+1:]
+			result = {
+				'image' : image,
+				'title' : title,
+				'id' : id_
+			}
+			cls.hot_recommend.append(result)
+
+		#customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li')
+		##print customized_list
+		#for customized in customized_list:
+		#	if customized.get('data-res-action',None) is None:
+		#		continue 
+		#	image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
+		#	a = customized.find('p',class_='dec f-brk').find('a')
+		#	title = a.string
+		#	id_ = a.get('href')[a.get('href').find('=')+1:]
+		#	description = customized.find('p',class_='idv f-brk s-fc4').get('title')
+		#	result = {
+		#		'image' : image,
+		#		'title' : title,
+		#		'id' : id_,
+		#		'description' : description
+		#	}
+		#	self._personal_customized.append(result)
+
+		cd_list = content.find('div',class_='n-disk').find_all('ul',class_='f-cb roller-flag')
+		for cds in cd_list:
+			for cd in cds.find_all('li'):
+				a = cd.find_all('p',class_='f-thide')
+				title = a[0].find('a').string
+				id_ = a[0].find('a').get('href')[a[0].find('a').get('href').find('=')+1:]
+				artist = a[1].find('a').string
+				artist_id = a[1].find('a').get('href')[a[1].find('a').get('href').find('=')+1:]
+				result = {
+					'title' : title,
+					'id' : id_,
+					'artist' : artist,
+					'artist_id' : artist_id
+				}
+				cls.new_cd.append(result)
+
+		#print resp.content
 
 class NeteaseSong:
 	
@@ -98,6 +160,6 @@ class NeteaseSong:
 
 
 n = NeteaseUser('a','b','c')
-n.search('我怀念的 孙燕姿 逆光')
+NeteaseUser.get_discover()
 #s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
 #s.get_link()
