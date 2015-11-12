@@ -203,12 +203,14 @@ class XiamiUser:
 		cd_list = content.find('div',id='albums').find('div',class_='content_block').find_all('div',class_='album')
 		for cd in cd_list:
 			a = cd.find('div',class_='info').find_all('p')
+			image = cd.find('div',class_='image').find('img').get('src')
 			title = a[0].find('a').string
 			id_ = a[0].find('a').get('href')[7:]
 			artist = a[1].find('a').string
 			artist_id = a[1].find('a').get('href')[8:]
 			result = {
 				'title' : title,
+				'image' : image,
 				'id' : id_,
 				'artist' : artist,
 				'artist_id' : artist_id
@@ -217,7 +219,8 @@ class XiamiUser:
 
 		URL = 'http://www.xiami.com/index/collect'
 		resp = requests.get(URL,headers=headers)
-		content = BS(resp.json().get('data').get('collect'))
+		#print resp.json().get('data').get('collects')
+		content = BS(resp.json().get('data').get('collects'))
 	
 		hot_list = content.find_all('div',class_='collect')
 		for hot in hot_list:

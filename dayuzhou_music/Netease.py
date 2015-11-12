@@ -112,12 +112,14 @@ class NeteaseUser:
 		for cds in cd_list:
 			for cd in cds.find_all('li'):
 				a = cd.find_all('p',class_='f-thide')
+				image = cd.find('img').get('data-src')
 				title = a[0].find('a').string
 				id_ = a[0].find('a').get('href')[a[0].find('a').get('href').find('=')+1:]
 				artist = a[1].find('a').string
 				artist_id = a[1].find('a').get('href')[a[1].find('a').get('href').find('=')+1:]
 				result = {
 					'title' : title,
+					'image' : image,
 					'id' : id_,
 					'artist' : artist,
 					'artist_id' : artist_id
