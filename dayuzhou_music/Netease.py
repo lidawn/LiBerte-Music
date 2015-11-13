@@ -1,6 +1,8 @@
 #coding:utf-8
 import requests
 from bs4 import BeautifulSoup as BS
+import json,os,base64
+from Crypto.Cipher import AES
 
 user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
 						AppleWebKit/537.36 (KHTML, like Gecko) 
@@ -13,14 +15,64 @@ cookies = {'appver':'1.5.2'}
 
 class NeteaseUser:
 	'''网易用户'''
-	session = requests.Session()
+	
 	hot_recommend = []		#热门推荐    #后面个性定制五个标签
 	new_cd = []				#新碟上架
+
+	resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers)
+
+	
 	def __init__(self,username,password,accountType):
 		self._username = username
 		self._password = password
 		self._accountType = accountType
 		self._personal_customized = []	#个性化推荐
+		self._session =  requests.Session()
+
+	@staticmethod
+	def aesEncrypt(text, secKey):
+		pad = 16 - len(text) % 16
+		text = text + pad * chr(pad)
+		encryptor = AES.new(secKey, 2, '0102030405060708')
+		ciphertext = encryptor.encrypt(text)
+		ciphertext = base64.b64encode(ciphertext)
+		return ciphertext
+
+	@staticmethod
+	def rsaEncrypt(text, pubKey, modulus):
+		text = text[::-1]
+		rs = int(text.encode('hex'), 16)**int(pubKey, 16)%int(modulus, 16)
+		return format(rs, 'x').zfill(256)
+	
+	@staticmethod
+	def createSecretKey(size):
+		return (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(size))))[0:16]
+
+	def login(self):
+		URL = 'http://music.163.com/weapi/login/cellphone/'
+
+		text = {
+			'username':'lidawn1991@163.com',
+			'password':'***',
+			'rememberLogin':'true'
+		}
+		
+		modulus = '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'
+		nonce = '0CoJUm6Qyw8W8jud'
+		pubKey = '010001'
+
+		text = json.dumps(text)
+		secKey = self.createSecretKey(16)
+		encText = self.aesEncrypt(self.aesEncrypt(text,nonce),secKey)
+		encSecKey = self.rsaEncrypt(secKey,pubKey,modulus)
+
+		post_data = {
+			'params':encText,
+			'encSecKey':encSecKey
+		}
+
+		resp = self._session.post(URL,data=post_data,headers=headers)
+		print resp.content
 
 	def get_personal_customized(self):
 		return self._personal_customized
@@ -162,6 +214,6 @@ class NeteaseSong:
 
 
 n = NeteaseUser('a','b','c')
-NeteaseUser.get_discover()
+n.login()
 #s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
 #s.get_link()

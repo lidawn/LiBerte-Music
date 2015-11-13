@@ -10,12 +10,14 @@
 </head>
 <body>
 <div class="container" style="padding-top:10px;">
+
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if results.result_netease.hot_recommend %}
 	<h3>热门歌单</h3>
 	<div class="row">
 	{% for hot_recommend in results.result_netease.hot_recommend %}
-	<div class="col-sm-2">
+	<div class="col-sm-4 col-md-2">
+	<div class="thumbnail" height="250">
 	<a href="#" onclick="" >
 		<img src="{{hot_recommend.image}}" alt="点击播放" class="img-circle">
 	</a>
@@ -23,12 +25,14 @@
 		{{hot_recommend.title}}
 	</a>
 	</div>
+	</div>
 	{% endfor %}
 	{% endif %}
 
 	{% if results.result_xiami.hot_recommend %}
 	{% for hot_recommend in results.result_xiami.hot_recommend %}
-	<div class="col-sm-2">
+	<div class="col-sm-4 col-md-2">
+	<div class="thumbnail" height="250">
 	<a href="#" onclick="" >
 		<img src="{{hot_recommend.image}}" alt="点击播放" class="img-circle" width="140" height="140">
 	</a>
@@ -36,9 +40,8 @@
 		{{hot_recommend.title}}
 	</a>
 	</div>
-	{% endfor %}
 	</div>
-
+	{% endfor %}
 	{% endif %}
 
 
