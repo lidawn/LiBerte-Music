@@ -15,84 +15,88 @@ class XiamiUser:
 	hot_recommend = []		#精选集
 	new_cd = []				#新碟首发
 	daxia = []				#大虾推荐
+	url = 'https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=0.9090916193090379'
+	bs = BS(requests.get(url).content)
+
 	#http://www.xiami.com/index/recommend  猜你喜欢
-	def __init__(self,username,password,accountType):
+	def __init__(self,username,password):
 		self._username = username
 		self._password = password
-		self._accountType = accountType
 		self._session = requests.Session()
 		self._personal_customized = []			#猜你喜欢
 
-	def login(self):
+	def get_session(self):
+		return self._session
+
+	def login_with_xiami(self):
 		'''用虾米账号登录'''
 		URL = 'https://login.xiami.com/member/login'
 		post_data = {'_xiamitoken':'20f0e5a22def96dbe410f339a65e6600',
-					'done':'http%3A%2F%2Fwww.xiami.com',
+					'done':'http://www.xiami.com',
 					'from':'web',
 					'email':self._username,
 					'password':self._password,
 					'submit':'登 录'}
 		resp = self._session.post(URL,headers=headers,data=post_data)
-		#print resp
+		print 'resp',resp
 		#return session
 
-	def login_with_taobao(self):
+	def login_with_taobao(self,captcha):
 		'''用淘宝账号登录
 		'''
-		captcha = ''
-		url = 'https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=0.9090916193090379'
-		bs = BS(self._session.get(url).content)
-
 		check_url = 'https://passport.alipay.com/newlogin/account/check.do?fromSite=0'
 		check_data = {
 			'loginId': self._username,
 			'appName': 'xiami',
-			'appEntrance': 'taobao'
+			'appEntrance': 'taobao',
 		}
 
 		ret = self._session.post(check_url,data=check_data,headers=headers)
-		#print ret.content
-
-		rsa_n = int(bs.find('input', {"id": "fm-modulus"}).get('value'), base=16)
+		rsa_n = int(self.bs.find('input', {"id": "fm-modulus"}).get('value'), base=16)
 		rsa_e = 65537
 		public_key = rsa.PublicKey(rsa_n, rsa_e)
-		encrypted_password = rsa.encrypt(self._password, public_key).encode('hex')
-		#print encrypted_password
-		while True:
-			data = {
-				'loginId': self._username,
-				'password2': encrypted_password,
-				'appName': 'xiami',
-				'appEntrance': 'taobao',
-				'hsid': bs.find('input', {'name': 'hsid'})['value'],
-				'cid': bs.find('input', {'name': 'cid'})['value'],
-				'rdsToken': bs.find('input', {'name': 'rdsToken'})['value'],
-				'umidToken': bs.find('input', {'name': 'umidToken'})['value'],
-				'_csrf_token': bs.find('input', {'name': '_csrf_token'})['value'],
-				'checkCode': captcha
+		encrypted_password = rsa.encrypt(self._password.encode('utf-8'), public_key).encode('hex')
+		data = {
+			'loginId': self._username,
+			'password2': encrypted_password,
+			'appName': 'xiami',
+			'appEntrance': 'taobao',
+			'hsid': self.bs.find('input', {'name': 'hsid'})['value'],
+			'cid': self.bs.find('input', {'name': 'cid'})['value'],
+			'rdsToken': self.bs.find('input', {'name': 'rdsToken'})['value'],
+			'umidToken': self.bs.find('input', {'name': 'umidToken'})['value'],
+			'_csrf_token': self.bs.find('input', {'name': '_csrf_token'})['value'],
+			'checkCode':captcha
+		}
+
+		print 'data',data
+		headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
+
+		ret = self._session.post('https://passport.alipay.com/newlogin/login.do?fromSite=0',headers=headers,data=data)
+		print ret
+		ret = ret.json()
+		# 验证码
+		#print ret['content']
+		if ret['content']['status'] == -1:
+			if ret['content'].get('data', {}).get('checkCodeLink'):
+				message = {
+					'status' : False,
+					'titleMsg' : ret['content']['data'].get('titleMsg', ''),
+					'captcha_url' : ret['content']['data'].get('checkCodeLink')
+				}
+				return message
+		else:
+			#登录成功, 将 st 传递给虾米
+			st = ret['content']['data']['st']
+			headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
+			ret = self._session.get('http://www.xiami.com/accounts/back?st=' + st,headers=headers)
+			message = {
+					'status' : True,
+					'titleMsg' : None,
+					'captcha_url' : None
 			}
-			ret = self._session.post('https://passport.alipay.com/newlogin/login.do?fromSite=0',headers=headers,data=data).json()
-			#print ret
-			# 验证码
-			if ret['content']['status'] == -1:
-				if ret['content'].get('data', {}).get('checkCodeLink'):
-					session_id = bs.find('input', {'name': 'cid'})['value']
-					captcha_url = ret['content']['data']['checkCodeLink']
-					#处理验证码
-					captcha = ''
-					print captcha
-					continue  # 重新提交一次
-				else:
-					if ret['content']['data'].get('titleMsg', '') == u'\u9a8c\u8bc1\u7801\u9519\u8bef\uff0c\u8bf7\u91cd\u65b0\u8f93\u5165':
-						#验证码错误
-						captcha = ''
-						continue
-			else:
-				#登录成功, 将 st 传递给虾米
-				st = ret['content']['data']['st']
-				headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
-				ret = self._session.get('http://www.xiami.com/accounts/back?st=' + st,headers=headers}
-				break
+			return message
+			
 
 	def get_favor_song(self):
 		'''获取收藏歌曲'''
@@ -402,9 +406,8 @@ class XiamiSong:
 
 		return real_url
 
-
-c = XiamiUser('lidawn1991','***','c')
-c.login_with_taobao()
+u = XiamiUser('lidawn1991@163.com','rfe')
+u.login_with_xiami()
 #s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
 #print s.get_link()
 #c.get_favor_song()

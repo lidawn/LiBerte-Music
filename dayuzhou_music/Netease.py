@@ -19,9 +19,9 @@ class NeteaseUser:
 	hot_recommend = []		#热门推荐    #后面个性定制五个标签
 	new_cd = []				#新碟上架
 
-	resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers)
+	#resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers)
 
-	
+
 	def __init__(self,username,password,accountType):
 		self._username = username
 		self._password = password
