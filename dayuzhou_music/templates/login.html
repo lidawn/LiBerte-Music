@@ -1,37 +1,12 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>绑定虾米</title>
+	<title>登录</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-	<!--
-	<script type="text/javascript">
-	soundManager.setup({
-		url : "{{STATIC_URL}}swf/"
- 	})
 
-	function play(is_playable,id,name,artist,album)
-	{
-		$.ajax({
-			type : "POST",
-			url : "/get_link/",
-			data : {is_playable:is_playable,id:id,name:name,artist:artist,album:album},
-			dataType : "text",
-			success : function(ret){
-				if(ret != "404")
-				{
-					var mySound = soundManager.createSound({
-						url : ret
-					});
-					mySound.play();
-				}
-			}
-		})
-	}
-	</script>
-	-->
 </head>
 <body>
 <div class="container" style="padding-top:10px;">
@@ -41,11 +16,14 @@
 		<div class="alert alert-warning" role="alert">{{ message.titleMsg }}</div>
 		{% endif %}
 
-	  	<label for="xiami_id">虾米账号(Email):</label>
-	  	<input type="text" class="form-control" name='xiami_id' id='xiami_id' placeholder="Email">
+	  	<label for="id">账户（Email）:</label>
+	  	<input type="text" class="form-control" name='id' id='id' placeholder="Email">
 	  	<label for="passwd">密码:</label>
 	  	<input type="password" class="form-control" name='passwd' id='passwd' placeholder="密码">
-	  	<button type="submit" class="btn btn-primary btn-lg">绑定</button>
+	  	<input type="checkbox"  value="记住我" class="">
+	  	<button type="submit" class="btn btn-primary btn-lg">登录</button>
+	  	<a href="/signup/" class="">注册</a>
+	  	<a href="/findpasswd/" class="">找回密码</a>
 	  </div>
 	</form>
 

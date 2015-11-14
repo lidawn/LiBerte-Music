@@ -2,6 +2,12 @@
 import requests
 from bs4 import BeautifulSoup as BS
 import re,rsa
+import platform
+
+
+if platform.system() == 'Darwin':
+	import requests.packages.urllib3.util.ssl_
+	requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL'
 
 user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
 						AppleWebKit/537.36 (KHTML, like Gecko) 
@@ -37,8 +43,21 @@ class XiamiUser:
 					'email':self._username,
 					'password':self._password,
 					'submit':'登 录'}
-		resp = self._session.post(URL,headers=headers,data=post_data)
-		print 'resp',resp
+		self._session.post(URL,headers=headers,data=post_data)
+		resp = self._session.get('http://www.xiami.com/account',headers=headers)
+		content = BS(resp.content)
+		if content.find('div',class_='account').find('h2',class_='tit'):
+			 message = {
+			 	'status':True,
+			 	'titleMsg':''
+			 }
+			 
+		else:
+			message = {
+				'status' : False,
+				'titleMsg':'发生错误'
+			}
+		return message
 		#return session
 
 	def login_with_taobao(self,captcha):
@@ -406,8 +425,8 @@ class XiamiSong:
 
 		return real_url
 
-u = XiamiUser('lidawn1991@163.com','rfe')
-u.login_with_xiami()
+#u = XiamiUser('lidawn1991@163.com','294833369')
+#u.login_with_xiami()
 #s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
 #print s.get_link()
 #c.get_favor_song()

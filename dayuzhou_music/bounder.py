@@ -30,18 +30,7 @@ def bound_xiami_taobao(request):
 		if message['status']:
 			return HttpResponseRedirect('/')
 		print 'message',message
-		#id_ = request.POST.get('id')
-		#if is_playable == 'True' :
-		#	link =  XS.get_link(id_)
-		#else:
-		#	name = request.POST.get('name')
-		#	artist = request.POST.get('artist')
-		#	album = request.POST.get('album')
-		#	ids = NS.parse_id(name,artist,album)
-		#	if ids :
-		#		link =  NS.get_link(ids.get('id'),ids.get('album_id'))
-		#	else:
-		#		link = '404'
+		
 	return render(request,'bound_xiami_taobao.html',{'message':message,})
 
 @csrf_exempt
@@ -58,21 +47,30 @@ def bound_xiami(request):
 
 		xu = XU(xiami_id,passwd)
 
-		xu.login_with_xiami()
+		message = xu.login_with_xiami()
 		#print message
 		if message['status']:
 			return HttpResponseRedirect('/')
-		#print 'message',message
-		#id_ = request.POST.get('id')
-		#if is_playable == 'True' :
-		#	link =  XS.get_link(id_)
-		#else:
-		#	name = request.POST.get('name')
-		#	artist = request.POST.get('artist')
-		#	album = request.POST.get('album')
-		#	ids = NS.parse_id(name,artist,album)
-		#	if ids :
-		#		link =  NS.get_link(ids.get('id'),ids.get('album_id'))
-		#	else:
-		#		link = '404'
+		
 	return render(request,'bound_xiami.html',{'message':message,})
+
+@csrf_exempt
+def bound_netease(request):
+	message = {'status':True,'titleMsg':'发生错误'}
+	if request.method=="POST":
+		netease_id = request.POST.get('netease_id')
+		passwd = request.POST.get('passwd')
+		
+		if netease_id.replace(' ','') == '':
+			return render(request,'bound_netease.html',{'message':message,})
+		if passwd.replace(' ','') == '':
+			return render(request,'bound_netease.html',{'message':message,})
+
+		nu = NU(netease_id,passwd)
+
+		message = nu.login()
+		#print message
+		if message['status']:
+			return HttpResponseRedirect('/')
+		
+	return render(request,'bound_netease.html',{'message':message,})

@@ -1,7 +1,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>绑定虾米（淘宝）</title>
+	<title>绑定网易云音乐</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
@@ -41,15 +41,10 @@
 		<div class="alert alert-warning" role="alert">{{ message.titleMsg }}</div>
 		{% endif %}
 
-	  	<label for="taobao_id">淘宝ID:</label>
-	  	<input type="text" class="form-control" name='taobao_id' id='taobao_id' placeholder="淘宝ID">
+	  	<label for="netease_id">网易通行证（Email）:</label>
+	  	<input type="text" class="form-control" name='netease_id' id='netease_id' placeholder="Email">
 	  	<label for="passwd">密码:</label>
 	  	<input type="password" class="form-control" name='passwd' id='passwd' placeholder="密码">
-	  	{% if message.captcha_url %}
-	  	<label for="captcha">验证码:</label>
-	  	<input type="text" class="form-control" name='captcha' id='captcha' placeholder="验证码">
-	  	<img src="{{message.captcha_url}}">
-	  	{%endif%}
 	  	<button type="submit" class="btn btn-primary btn-lg">绑定</button>
 	  </div>
 	</form>

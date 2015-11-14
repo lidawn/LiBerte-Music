@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^$','dayuzhou_music.views.index'),
     url(r'^bound/xiami/taobao/$','dayuzhou_music.bounder.bound_xiami_taobao'),
     url(r'^bound/xiami/$','dayuzhou_music.bounder.bound_xiami'),
+    url(r'^bound/netease/$','dayuzhou_music.bounder.bound_netease'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

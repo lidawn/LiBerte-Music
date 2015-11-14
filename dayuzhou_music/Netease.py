@@ -213,7 +213,7 @@ class NeteaseSong:
 				return song.get('mp3Url')
 
 
-n = NeteaseUser('a','b','c')
-n.login()
+#n = NeteaseUser('a','b','c')
+#n.login()
 #s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
 #s.get_link()
