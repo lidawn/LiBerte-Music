@@ -4,27 +4,28 @@
 	<title>get</title>
 	<script type="text/javascript">
 	window.addEventListener('message', function(e) {
-    document.querySelector("#message").innerHTML = "接受到的信息是：" + e.data;
-}, false);
-
-// 当文档加载完毕, 给父级来源发送信息。
-window.addEventListener('load', function(e){
-    e.currentTarget.opener.postMessage('ready', 'http://www.zhangxinxu.com');
-}, false);
-
-// 当窗体关闭，告诉父级窗体已经关闭了。
-window.addEventListener('unload', function(e){
-    e.currentTarget.opener.postMessage('closed', 'http://www.zhangxinxu.com');
-}, false);
-
-
-
-
-
+    	document.getElementById('test').innerText +=  e.data;
+	}, false);
+	window.onbeforeunload = function()  
+{  
+  var n = window.event.screenX - window.screenLeft;  
+  var b = n > document.documentElement.scrollWidth-20;  
+  if(b && window.event.clientY < 0 || window.event.altKey)  
+  {  
+          var cookie_string =  document.cookie;
+          if (cookie_string.indexOf("is_playlist_open")!=-1){
+          	document.cookie = cookie_string = cookie_string.substring(0,cookie_string.indexOf("is_playlist_open")-1);
+          }
+  }
+else  
+  {  
+      alert("是刷新而非关闭");  
+  }  
+}  
 
 </script>
 </head>
 <body>
-
+<p id="test"></p>
 </body>
 </html>

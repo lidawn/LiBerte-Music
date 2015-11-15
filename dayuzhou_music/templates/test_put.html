@@ -3,26 +3,39 @@
 <head>
 	<title>put</title>
 	<script type="text/javascript">
-	window.addEventListener('message', function(e) {
-    var interval;
-    if (e.origin == 'http://www.zhangxinxu.com')
-        switch (e.data) {
-            case 'ready':
-                // e.source 为发送的 window 对象
-                interval = setTimeout(function(win) {
-                    win.postMessage(message,'http://www.zhangxinxu.com');    
-                }, 2000, e.source);
+    function sendMessage(e){
+        //查询cookie,是否打开了playlist
+        var cookie_string = document.cookie
+        var cookie_array = cookie_string.split(";");
+        var is_playlist_open = "0";
+        for (var i = 0; i <cookie_array.length ; i++) {
+            if(cookie_array[i].indexOf("is_playlist_open") != -1){
+                //playlist is opened
+                is_playlist_open = "1";
+                //send message
+                window.postMessage(e,"test_get.html");
                 break;
-    
-            case 'closed':
-                clearInterval(interval);
-                break;
+            }
+        }
+        //playlist is not open
+        if(is_playlist_open=="0"){
+            //open playlist
+            window.open("test_get.html");
+            //write cookie
+            cookie_string += ";is_playlist_open=1";
+            document.cookie = cookie_string;
+            //send message
+            window.postMessage(e,"test_get.html");
+        }
     }
- }, false);
+    
+
+	
 
 	</script>
 </head>
 <body>
+<button onclick="sendMessage('1234')">Copy Text</button>
 
 </body>
 </html>
