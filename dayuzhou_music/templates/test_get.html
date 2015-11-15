@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>get</title>
+	<script type="text/javascript">
+	window.addEventListener('message', function(e) {
+    document.querySelector("#message").innerHTML = "接受到的信息是：" + e.data;
+}, false);
+
+// 当文档加载完毕, 给父级来源发送信息。
+window.addEventListener('load', function(e){
+    e.currentTarget.opener.postMessage('ready', 'http://www.zhangxinxu.com');
+}, false);
+
+// 当窗体关闭，告诉父级窗体已经关闭了。
+window.addEventListener('unload', function(e){
+    e.currentTarget.opener.postMessage('closed', 'http://www.zhangxinxu.com');
+}, false);
+
+
+
+
+
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
