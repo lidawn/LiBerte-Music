@@ -1,7 +1,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>登录</title>
+	<title>注册</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
@@ -11,21 +11,21 @@
 <body>
 <div class="container" style="padding-top:10px;">
 	<form class="form-horizontal" method="post" action="">
-		{% csrf_token %}
 	  <div class="form-group">
 	  	{% if not message.status %}
 		<div class="alert alert-warning" role="alert">{{ message.titleMsg }}</div>
 		{% endif %}
 
 	  	<label for="id">账户（Email）:</label>
-	  	<input type="text" class="form-control" name='id' id='id' placeholder="Email">
+	  	<input type="text" class="form-control" name='id' id='id' placeholder="Email(可用来找回密码)">
 	  	<label for="passwd">密码:</label>
 	  	<input type="password" class="form-control" name='passwd' id='passwd' placeholder="密码">
-	  	<label><input type="checkbox"  name="remember_me" class=""/>记住我</label>
-	  	<a href="/register/" class="">注册</a>
-	  	<a href="/findpasswd/" class="">找回密码</a>
-	  	<button type="submit" class="btn btn-primary btn-lg">登录</button>
-	  	
+	  	<label for="passwd_again">密码确认:</label>
+	  	<input type="password" class="form-control" name='passwd_again' id='passwd_again' placeholder="再次确认">
+	  	<label for="invitation">邀请码:</label>
+	  	<input type="text" class="form-control" name='invitation' id='invitation' placeholder="邀请码">
+	  	<button type="submit" class="btn btn-primary btn-lg">注册</button>
+	  	<a href="/login/">已有账号？点击登录</a>
 	  </div>
 	</form>
 

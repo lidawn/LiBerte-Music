@@ -1,25 +1,38 @@
-
 <html lang="zh-CN">
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
 	<title>播放器</title>
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}plugin/css/style.css">
+    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}plugin/jquery-jplayer/jquery.jplayer.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}plugin/ttw-music-player-min.js"></script>
+
+    <script type="text/javascript">
+    	var myPlaylist = [
+    	{
+	        mp3:'http://m2.music.126.net/BsOGGfOS7CueDaj6_mJYtA==/6620159510912123.mp3',
+	        title:'我怀念的',
+	        artist:'孙燕姿',
+	        rating:4,
+	        buy:'#',
+	        duration:'0:30',
+	        cover:''
+    	}
+		];
+        $(document).ready(function(){
+            var description = 'Good Job !';
+
+            $('body').ttwMusicPlayer(myPlaylist, {
+                autoPlay:false, 
+                description:description,
+                jPlayer:{
+                    swfPath:'{{STATIC_URL}}plugin/jquery-jplayer'
+                }
+            });
+        });
+    </script>
 </head>
 <body>
-<script src="soundmanager2.js" type="text/javascript"></script>
-<script type="text/javascript">
-	soundManager.setup({
-		url : 'swf/',
-		onready:function(){
-			var mySound = soundManager.createSound({
-				id:'aSound',
-				url : 'http://m2.music.126.net/BsOGGfOS7CueDaj6_mJYtA==/6620159510912123.mp3'
-			});
-			mySound.play();
-		},
-		ontimeout:function(){
 
-		}
- 	})
-</script>
 </body>
 </html>

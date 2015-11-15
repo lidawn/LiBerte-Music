@@ -4,14 +4,24 @@ from bs4 import BeautifulSoup as BS
 import json,os,base64
 from Crypto.Cipher import AES
 import hashlib
+
 user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
 						AppleWebKit/537.36 (KHTML, like Gecko) 
 						Chrome/46.0.2490.80 
 						Safari/537.36
 			'''
-headers = {'user-Agent':user_agent,'connection':'keep-alive','referer':'http://music.163.com'}
+headers = {
+	'user-Agent':user_agent,
+	'connection':'keep-alive',
+	'Referer':'http://music.163.com/',
+	'Accept': '*/*',
+	'Accept-Encoding': 'gzip,deflate,sdch',
+	'Accept-Language': 'zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4',
+	'Content-Type': 'application/x-www-form-urlencoded',
+	'Host': 'music.163.com'
+	}
 
-cookies = {'appver':'1.5.2'}
+cookies = {'appver':'2.0.2'}
 
 class NeteaseUser:
 	'''网易用户'''
@@ -21,11 +31,11 @@ class NeteaseUser:
 
 	#resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers)
 
-
-	def __init__(self,username,password,accountType):
+	def __init__(self,username,password):
 		self._username = username
 		self._password = password
-		self._accountType = accountType
+		self._uid = 0
+		self._nickname = ''
 		self._personal_customized = []	#个性化推荐
 		self._session =  requests.Session()
 
@@ -50,13 +60,12 @@ class NeteaseUser:
 
 	def login(self):
 		URL = 'http://music.163.com/weapi/login/'
-
+		#user = User.objects.get(netease_username=self._username)
 		text = {
-			'username':'lidawn1991@163.com',
-			'password':hashlib.md5('LIlovedan1991').hexdigest(),
+			'username':self._username,
+			'password':hashlib.md5(self._password).hexdigest(),
 			'rememberLogin':'true'
 		}
-		
 		modulus = '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'
 		nonce = '0CoJUm6Qyw8W8jud'
 		pubKey = '010001'
@@ -71,8 +80,40 @@ class NeteaseUser:
 			'encSecKey':encSecKey
 		}
 
-		resp = self._session.post(URL,data=post_data,headers=headers)
-		print resp.content
+		#cookies = {
+		#	'MUSIC_U' : '934e6d4051f9b826b02c927d28df2394192dba7eb4fe2cae679ba046251a51acb3dda51c0e04c53b56bae0635616e4d0bb6cc9ca2a38915441049cea1c6bb9b6',
+		#	'NETEASE_WDA_UID' : '14946761#|#1417935701145',
+		#	'__csrf' : 'b3729dc17e11cd606c766206cf9d4303',
+		#	'__remember_me' : 'true',
+		#	'appver':'2.0.2'
+		#}
+		#resp = requests.get('http://music.163.com/discover/recommend/taste',cookies=cookies,headers=headers)
+		#f = open('txt.txt','a')
+		#f.write(resp.content)
+		#f.close()
+
+		#resp = self._session.post(URL,data=post_data,headers=headers,cookies=cookies)
+		#保存cookie
+		#for key in resp.cookies.keys():
+		#	print key,resp.cookies[key]
+		
+		#resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers,cookies=cookies)
+		#print resp.content.decode('utf-8')
+		if resp.status_code == 200:
+			print resp.content
+			self._uid = resp.json().get('account').get('id')
+			self._nickname = resp.json().get('profile').get('nickname')
+			message = {
+				'status':True,
+				'titleMsg' :''
+			}
+			return message
+		else:
+			message = {
+				'status':False,
+				'titleMsg' :'发生错误'
+			}
+			return message
 
 	def get_personal_customized(self):
 		return self._personal_customized
@@ -180,6 +221,27 @@ class NeteaseUser:
 
 		#print resp.content
 
+	@staticmethod
+	def get_favor_song(uid):
+		resp = requests.get('http://music.163.com/api/user/playlist/?uid=%s&offset=0&limit=100'%str(uid),headers=headers,cookies=cookies)
+		try:
+			playlists = resp.json().get('playlist')
+			song_list = []
+			for playlist in playlists:
+				song = {}
+				song['name'] = playlist.get('name')
+				song['name'] = playlist.get('id')
+				song['name'] = playlist.get('coverImgUrl')
+				song['name'] = playlist.get('trackCount')
+				song_list.append(song)
+		except:
+			#出错，重新登录授权
+			pass
+
+
+		return song_list
+
+
 class NeteaseSong:
 	
 	def __init__(self,id_,album_id,name,is_favored,is_playable):
@@ -213,7 +275,7 @@ class NeteaseSong:
 				return song.get('mp3Url')
 
 
-n = NeteaseUser('a','b','c')
-n.login()
+#n = NeteaseUser('lidawn1991@163.com','***')
+#n.login()
 #s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
 #s.get_link()

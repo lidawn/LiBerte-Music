@@ -1,0 +1,28 @@
+
+<html>
+<head>
+	<title>put</title>
+	<script type="text/javascript">
+	window.addEventListener('message', function(e) {
+    var interval;
+    if (e.origin == 'http://www.zhangxinxu.com')
+        switch (e.data) {
+            case 'ready':
+                // e.source 为发送的 window 对象
+                interval = setTimeout(function(win) {
+                    win.postMessage(message,'http://www.zhangxinxu.com');    
+                }, 2000, e.source);
+                break;
+    
+            case 'closed':
+                clearInterval(interval);
+                break;
+    }
+ }, false);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
