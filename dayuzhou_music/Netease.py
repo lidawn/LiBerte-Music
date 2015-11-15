@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup as BS
 import json,os,base64
 from Crypto.Cipher import AES
-
+import hashlib
 user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
 						AppleWebKit/537.36 (KHTML, like Gecko) 
 						Chrome/46.0.2490.80 
@@ -49,11 +49,11 @@ class NeteaseUser:
 		return (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(size))))[0:16]
 
 	def login(self):
-		URL = 'http://music.163.com/weapi/login/cellphone/'
+		URL = 'http://music.163.com/weapi/login/'
 
 		text = {
 			'username':'lidawn1991@163.com',
-			'password':'***',
+			'password':hashlib.md5('LIlovedan1991').hexdigest(),
 			'rememberLogin':'true'
 		}
 		
@@ -213,7 +213,7 @@ class NeteaseSong:
 				return song.get('mp3Url')
 
 
-#n = NeteaseUser('a','b','c')
-#n.login()
+n = NeteaseUser('a','b','c')
+n.login()
 #s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
 #s.get_link()
