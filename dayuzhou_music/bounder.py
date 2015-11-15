@@ -4,8 +4,6 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from Xiami import XiamiUser as XU , XiamiSong as XS
 from Netease import NeteaseUser as NU , NeteaseSong as NS
-import requests
-from bs4 import BeautifulSoup as BS
 
 @csrf_exempt
 def bound_xiami_taobao(request):

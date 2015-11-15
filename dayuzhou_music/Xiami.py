@@ -116,7 +116,6 @@ class XiamiUser:
 			}
 			return message
 			
-
 	def get_favor_song(self):
 		'''获取收藏歌曲'''
 		song_list = []
@@ -149,7 +148,12 @@ class XiamiUser:
 				else:
 					song_is_playable = False
 				#print song_id,song_name,song_is_favored,song_is_playable
-				song = XiamiSong(song_id,song_name,song_is_favored,song_is_playable)
+				song = {
+					'song_id':song_id,
+					'song_name':song_name,
+					'song_is_favored':song_is_favored,
+					'song_is_playable':song_is_playable
+				}
 				song_list.append(song)
 			if p == page_total:
 				break
@@ -425,7 +429,7 @@ class XiamiSong:
 
 		return real_url
 
-#u = XiamiUser('lidawn1991@163.com','294833369')
+#u = XiamiUser('lidawn1991@163.com','**')
 #u.login_with_xiami()
 #s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
 #print s.get_link()

@@ -1,0 +1,37 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{{profile.username}}的个人主页</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/soundmanager2.js"></script>
+</head>
+<body>
+<div class="container" style="padding-top:10px;">
+
+	<!-- a 的href 自己抓  不用原生的-->
+	{% if profile%}
+
+	<div class="alert alert-warning" role="alert">{{ profile.message }}</div>
+	<h2>{{profile.username}}的个人主页</h2>
+	{% if profile.favor_song_xiami %}
+	<h3>虾米收藏</h3>
+	{% for song in profile.favor_song_xiami%}
+	<a target="_blank" href="http://www.xiami.com/song/{{song.song_id}}">{{song.song_name}}</a><br/>
+	{% endfor %}
+	{% endif %}
+
+	{% if profile.favor_song_netease %}
+	<h3>网易收藏</h3>>
+	{% for song in profile.favor_song_netease%}
+	<a target="_blank" href="http://music.163.com/song?id={{song.song_id}}">{{song.song_name}}</a>
+	{% endfor %}
+	{% endif %}
+
+	{% endif %}
+	
+</div>
+</body>
+</html>

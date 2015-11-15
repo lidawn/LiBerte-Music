@@ -6,32 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-	<!--
-	<script type="text/javascript">
-	soundManager.setup({
-		url : "{{STATIC_URL}}swf/"
- 	})
 
-	function play(is_playable,id,name,artist,album)
-	{
-		$.ajax({
-			type : "POST",
-			url : "/get_link/",
-			data : {is_playable:is_playable,id:id,name:name,artist:artist,album:album},
-			dataType : "text",
-			success : function(ret){
-				if(ret != "404")
-				{
-					var mySound = soundManager.createSound({
-						url : ret
-					});
-					mySound.play();
-				}
-			}
-		})
-	}
-	</script>
-	-->
 </head>
 <body>
 <div class="container" style="padding-top:10px;">

@@ -6,7 +6,7 @@ from Netease import NeteaseUser as NU , NeteaseSong as NS
 
 def index(request):
 	if request.method=="GET":
-		netease_user = NU('a','b','c')
+		netease_user = NU('a','b')
 		netease_user.get_discover()
 		result_netease = {
 			'new_cd' : netease_user.new_cd ,
