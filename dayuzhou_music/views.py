@@ -33,3 +33,6 @@ def index(request):
 			'result_xiami' : result_xiami
 		}
 		return render(request,'index.html',{'results':results,})
+
+def player(request):
+	return render(request,'player.html')

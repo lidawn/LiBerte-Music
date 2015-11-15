@@ -236,7 +236,8 @@ class NeteaseUser:
 				song_list.append(song)
 		except:
 			#出错，重新登录授权
-			
+			pass
+
 
 		return song_list
 

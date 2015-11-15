@@ -20,15 +20,16 @@ urlpatterns = patterns('',
     url(r'^$','dayuzhou_music.views.index'),
     url(r'^bound/xiami/taobao/$','dayuzhou_music.bounder.bound_xiami_taobao'),
     url(r'^bound/xiami/$','dayuzhou_music.bounder.bound_xiami'),
-    #TOTEST
-    url(r'^bound/netease/$','dayuzhou_music.bounder.bound_netease'),
-    #TODO
     url(r'^login/$','dayuzhou_music.user.login'),
+    url(r'^logout/$','dayuzhou_music.user.logout'),
     url(r'^register/$','dayuzhou_music.user.register'),
+    #TODO
     url(r'^findpasswd/$','dayuzhou_music.user.findpasswd'),
-
     url(r'^home/setting/$','dayuzhou_music.user.user_setting'),
     url(r'^home/$','dayuzhou_music.user.user_home'),
+    url(r'^player/$','dayuzhou_music.views.player'),
+    #TOTEST
+    url(r'^bound/netease/$','dayuzhou_music.bounder.bound_netease'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
