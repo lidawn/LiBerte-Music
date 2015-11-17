@@ -2,30 +2,42 @@
 <html>
 <head>
 	<title>get</title>
+	<script src="{{STATIC_URL}}js/add_playlist.js"></script>
 	<script type="text/javascript">
+	function checkRefresh()
+	{
+		if( document.refreshForm.visited.value == "" )
+		{
+			document.refreshForm.visited.value = "1";
+			localStorage.setItem("is_playlist_fresh","fresh");
+			localStorage.setItem("is_playlist_open","open");
+		}
+		else
+		{
+			localStorage.setItem("is_playlist_fresh","refresh");
+			localStorage.setItem("is_playlist_open","open");
+		}
+	}
+
 	window.addEventListener('message', function(e) {
+		// /window.parent.postMessage()
+		console.log(e);
     	document.getElementById('test').innerText +=  e.data;
-	}, false);
-	window.onbeforeunload = function()  
-{  
-  var n = window.event.screenX - window.screenLeft;  
-  var b = n > document.documentElement.scrollWidth-20;  
-  if(b && window.event.clientY < 0 || window.event.altKey)  
-  {  
-          var cookie_string =  document.cookie;
-          if (cookie_string.indexOf("is_playlist_open")!=-1){
-          	document.cookie = cookie_string = cookie_string.substring(0,cookie_string.indexOf("is_playlist_open")-1);
-          }
-  }
-else  
-  {  
-      alert("是刷新而非关闭");  
-  }  
-}  
+	}, true);
+
+	window.onbeforeunload = function(e)  
+	{  
+    	//关闭或者刷新
+		localStorage.removeItem("is_playlist_open");
+		localStorage.removeItem("is_playlist_fresh");
+	}  
 
 </script>
 </head>
-<body>
+<body onLoad="JavaScript:checkRefresh();">
+<form name="refreshForm">
+<input type="hidden" name="visited" value="" />
+</form>
 <p id="test"></p>
 </body>
 </html>

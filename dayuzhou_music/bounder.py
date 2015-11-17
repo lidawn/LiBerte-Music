@@ -4,6 +4,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from Xiami import XiamiUser as XU , XiamiSong as XS
 from Netease import NeteaseUser as NU , NeteaseSong as NS
+from models import User
 
 @csrf_exempt
 def bound_xiami_taobao(request):
@@ -55,6 +56,7 @@ def bound_xiami(request):
 @csrf_exempt
 def bound_netease(request):
 	message = {'status':True,'titleMsg':'发生错误'}
+	#如果已绑定，跳走（还要解绑，检查cookie有效期）
 	if request.method=="POST":
 		netease_id = request.POST.get('netease_id')
 		passwd = request.POST.get('passwd')
@@ -67,8 +69,22 @@ def bound_netease(request):
 		nu = NU(netease_id,passwd)
 
 		message = nu.login()
+
 		#print message
 		if message['status']:
-			return HttpResponseRedirect('/')
+			username = request.session.get('username')
+			user = User.objects.get(username=username)
+			user.bound_netease = True
+			user.netease_uid = message['uid']
+			user.netease_username = message['nickname']
+			user.netease_cookies = str(message['netease_cookie'])
+			user.save()
+			profile = {
+				'username' : username,
+				'netease_username' : message['nickname']
+			}
+
+			return render(request,'setting.html',{'profile':profile,})
 		
 	return render(request,'bound_netease.html',{'message':message,})
+

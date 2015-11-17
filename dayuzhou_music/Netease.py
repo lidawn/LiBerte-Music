@@ -92,20 +92,26 @@ class NeteaseUser:
 		#f.write(resp.content)
 		#f.close()
 
-		#resp = self._session.post(URL,data=post_data,headers=headers,cookies=cookies)
+		resp = self._session.post(URL,data=post_data,headers=headers,cookies=cookies)
+		netease_cookie = {}
 		#保存cookie
 		#for key in resp.cookies.keys():
 		#	print key,resp.cookies[key]
 		
 		#resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers,cookies=cookies)
 		#print resp.content.decode('utf-8')
-		if resp.status_code == 200:
-			print resp.content
+		
+		if resp.content.find('account') !=-1:
 			self._uid = resp.json().get('account').get('id')
 			self._nickname = resp.json().get('profile').get('nickname')
+			for key in resp.cookies.keys():
+				netease_cookie[key] = resp.cookies[key]
 			message = {
 				'status':True,
-				'titleMsg' :''
+				'titleMsg' :'',
+				'uid' : self._uid,
+				'nickname' : self._nickname,
+				'netease_cookie':netease_cookie
 			}
 			return message
 		else:

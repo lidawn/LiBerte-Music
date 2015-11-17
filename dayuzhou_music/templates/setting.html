@@ -9,9 +9,17 @@
 </head>
 <body>
 <div class="container" style="padding-top:10px;">
-
+	{% if profile %}
+	<h2>{{profile.username}}</h2>
+	{% endif %}
 	<h3>账户设置</h3>
-	<a href="#">绑定网易云音乐账户</a><br/>
+
+	{% if profile.netease_username %}
+	<p>已绑定网易云音乐账户:<strong>{{profile.netease_username}}</strong></p>
+	{% else %}
+	<a href="/bound/netease/">绑定网易云音乐账户</a><br/>
+	{% endif %}
+
 	<a href="#">绑定虾米音乐账户</a><br/>
 	<a href="#">修改密码</a>
 	<h3>主页设置</h3>

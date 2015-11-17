@@ -85,10 +85,24 @@ def user_setting(request):
 	'''用户设置，主要用来设置个性化选项'''
 	message = {'status':True,'titleMsg':'发生错误'}
 	if request.method=="GET":
+		profile = {}
 		if request.session.get('is_login',False):
-			return HttpResponseRedirect('/login/')
+			username = request.session.get('username')
+			profile['username'] = username
+			user = User.objects.get(username=username)
+			
+			bound_xiami = user.bound_xiami
+			xiami_type = user.xiami_type
+			xiami_username = user.xiami_username
+			
+			bound_netease = user.bound_netease
+			
+			if bound_netease:
+				profile['netease_username'] = user.netease_username
+
+			return render(request,'setting.html',{'profile':profile,})
 		else:
-			return render(request,'setting.html')
+			return HttpResponseRedirect('/login/')
 	return HttpResponseRedirect('/login/')
 
 def user_home(request):

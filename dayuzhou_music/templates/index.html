@@ -4,12 +4,35 @@
 	<title>首页</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
-	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-	<script src="{{STATIC_URL}}js/soundmanager2.js"></script>
+    <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container" style="padding-top:10px;">
+	{% include 'player.html' %}
+	<script type="text/javascript">
+		function add_song(id){
+	
+			
+						
+							song = {
+								title: '德国第一装甲师进行曲',
+								artist: '德国',
+								album: '德国第一装甲师进行曲.mp3',
+								cover:'',
+								mp3: 'http://m2.music.126.net/BsOGGfOS7CueDaj6_mJYtA==/6620159510912123.mp3',
+								ogg: ''
+								};
+								playlist.push(song);
+								//switchTrack(playlist.lenth-1);
+								console.log(playlist);
+							
+								$('#playlist').append('<li>'+song.artist+' - '+song.title+'</li>');
+							
+		}
+        
+    </script>
 
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if results.result_netease.hot_recommend %}
@@ -18,7 +41,7 @@
 	{% for hot_recommend in results.result_netease.hot_recommend %}
 	<div class="col-sm-4 col-md-2">
 	<div class="thumbnail" height="250">
-	<a href="#" onclick="" >
+	<a href="#" onclick="add_song({{hot_recommend.id}})" >
 		<img src="{{hot_recommend.image}}" alt="点击播放" class="img-circle">
 	</a>
 	<a target="_blank" href="http://music.163.com/playlist?id={{hot_recommend.id}}" style="display: block;width:160px;">
@@ -100,7 +123,6 @@
 	{% endfor %}
 	</table>
 	{% endif %}
-
 	
 </div>
 </body>

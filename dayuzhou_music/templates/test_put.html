@@ -2,36 +2,27 @@
 <html>
 <head>
 	<title>put</title>
+	<script src="{{STATIC_URL}}js/add_playlist.js"></script>
+
 	<script type="text/javascript">
+
     function sendMessage(e){
-        //查询cookie,是否打开了playlist
-        var cookie_string = document.cookie
-        var cookie_array = cookie_string.split(";");
-        var is_playlist_open = "0";
-        for (var i = 0; i <cookie_array.length ; i++) {
-            if(cookie_array[i].indexOf("is_playlist_open") != -1){
-                //playlist is opened
-                is_playlist_open = "1";
-                //send message
-                window.postMessage(e,"test_get.html");
-                break;
-            }
-        }
-        //playlist is not open
-        if(is_playlist_open=="0"){
-            //open playlist
-            window.open("test_get.html");
-            //write cookie
-            cookie_string += ";is_playlist_open=1";
-            document.cookie = cookie_string;
-            //send message
-            window.postMessage(e,"test_get.html");
-        }
+
+    	var test = localStorage.getItem("is_playlist_open");
+    	var refresh = localStorage.getItem("is_playlist_fresh");
+    	//console.log(test);
+    	//localStorage.removeItem("is_playlist_open");
+    	if(refresh == null && test == null){
+    		//窗口未打开
+	        win = window.open("/test_get/");
+	        setTimeout("win.postMessage(e,"*");",1000);
+	    }
+	    else{
+	    	setTimeout("win.postMessage(e,"*");",1000);
+	    	//window.postMessage(e,"http://127.0.0.1:8080");
+    		//console.log(e);
+	    }
     }
-    
-
-	
-
 	</script>
 </head>
 <body>
@@ -39,3 +30,4 @@
 
 </body>
 </html>
+
