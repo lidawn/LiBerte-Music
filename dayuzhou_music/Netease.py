@@ -23,20 +23,17 @@ headers = {
 
 cookies = {'appver':'2.0.2'}
 
+#这个类定义貌似没有必要
 class NeteaseUser:
 	'''网易用户'''
 	
 	hot_recommend = []		#热门推荐    #后面个性定制五个标签
 	new_cd = []				#新碟上架
 
-	#resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers)
-
-	def __init__(self,username,password):
+	def __init__(self,username):
 		self._username = username
-		self._password = password
 		self._uid = 0
 		self._nickname = ''
-		self._personal_customized = []	#个性化推荐
 		self._session =  requests.Session()
 
 	@staticmethod
@@ -58,12 +55,11 @@ class NeteaseUser:
 	def createSecretKey(size):
 		return (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(size))))[0:16]
 
-	def login(self):
+	def login(self,password):
 		URL = 'http://music.163.com/weapi/login/'
-		#user = User.objects.get(netease_username=self._username)
 		text = {
 			'username':self._username,
-			'password':hashlib.md5(self._password).hexdigest(),
+			'password':hashlib.md5(password).hexdigest(),
 			'rememberLogin':'true'
 		}
 		modulus = '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'
@@ -80,26 +76,8 @@ class NeteaseUser:
 			'encSecKey':encSecKey
 		}
 
-		#cookies = {
-		#	'MUSIC_U' : '934e6d4051f9b826b02c927d28df2394192dba7eb4fe2cae679ba046251a51acb3dda51c0e04c53b56bae0635616e4d0bb6cc9ca2a38915441049cea1c6bb9b6',
-		#	'NETEASE_WDA_UID' : '14946761#|#1417935701145',
-		#	'__csrf' : 'b3729dc17e11cd606c766206cf9d4303',
-		#	'__remember_me' : 'true',
-		#	'appver':'2.0.2'
-		#}
-		#resp = requests.get('http://music.163.com/discover/recommend/taste',cookies=cookies,headers=headers)
-		#f = open('txt.txt','a')
-		#f.write(resp.content)
-		#f.close()
-
 		resp = self._session.post(URL,data=post_data,headers=headers,cookies=cookies)
 		netease_cookie = {}
-		#保存cookie
-		#for key in resp.cookies.keys():
-		#	print key,resp.cookies[key]
-		
-		#resp = self._session.get('http://music.163.com/api/user/playlist/?uid=14946761&offset=0&limit=100',headers=headers,cookies=cookies)
-		#print resp.content.decode('utf-8')
 		
 		if resp.content.find('account') !=-1:
 			self._uid = resp.json().get('account').get('id')
@@ -121,8 +99,74 @@ class NeteaseUser:
 			}
 			return message
 
-	def get_personal_customized(self):
-		return self._personal_customized
+	def get_personal_customized(self,cookies):
+		URL = 'http://music.163.com/discover'
+		#需要实时登录 POST请求
+		URL_recommmed = 'http://music.163.com/weapi/discovery/recommend/resource'
+		#cookie 传进来是个字典
+		cookies['appver'] = '2.0.2'
+		resp = requests.get(URL,headers=headers,cookies=cookies)
+		content = BS(resp.content)
+		#f = open("text.txt","a")
+		#f.write(resp.content)
+		#f.close()
+		customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li',{"data-res-action":"log"})
+		##print customized_list
+		personal_customized = []
+		
+		for customized in customized_list:
+			print customized.string,
+			if customized.get('data-res-action',None) is None:
+				continue 
+			image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
+			a = customized.find('p',class_='dec f-brk').find('a')
+			title = a.string
+			id_ = a.get('href')[a.get('href').find('=')+1:]
+			description = customized.find('p',class_='idv f-brk s-fc4').get('title')
+			result = {
+				'image' : image,
+				'title' : title,
+				'id' : id_,
+				'description' : description
+			}
+			personal_customized.append(result)
+		return True,personal_customized
+
+	def get_personal_taste(self,cookies):
+		#cookie 传进来是个字典
+		cookies['appver'] = '2.0.2'
+		resp = requests.get('http://music.163.com/discover/recommend/taste',cookies=cookies,headers=headers)
+		content = BS(resp.content)
+		#f = open("text.txt","a")
+		#f.write(resp.content)
+		#f.close()
+		taste_list = content.find('div',class_='n-songtb n-songtb-1 j-flag').find('tbody').find_all('tr')
+		#print 'taste_list',taste_list
+		personal_taste = []
+		for taste in taste_list:
+			id_ = taste.get('data-id')
+			#print id_,
+			infos  = taste.find_all('td')
+			#print infos
+			name = infos[1].find('a').string.replace('\'','\\\'')
+			duration = infos[2].string
+			artist_name = infos[3].find('a').string.replace('\'',' ')
+			get_id = lambda x : x[x.find('=')+1:]
+			artist_id = get_id(infos[3].find('a').get('href'))
+			album_name = infos[4].find('a').string.replace('\'',' ')
+			album_id = get_id(infos[4].find('a').get('href'))
+
+			result = {
+				'id' : id_,
+				'name' : name,
+				'duration' : duration,
+				'artist_name' : artist_name,
+				'artist_id' : artist_id,
+				'album_name' : album_name,
+				'album_id' : album_id
+			}
+			personal_taste.append(result)
+		return True,personal_taste
 
 	@classmethod
 	def search(cls,keywords):
@@ -146,6 +190,8 @@ class NeteaseUser:
 		resp = requests.post(URL,data=post_data,cookies=cookies,headers=headers)
 		#print '###song###'
 		results =  resp.json().get('result')
+		print results
+		print 'ke',keywords
 		songs = results.get('songs')
 		count =  (lambda x,y: x if x<y else y)(results.get('songCount'),len(songs))
 
@@ -189,24 +235,6 @@ class NeteaseUser:
 			}
 			cls.hot_recommend.append(result)
 
-		#customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li')
-		##print customized_list
-		#for customized in customized_list:
-		#	if customized.get('data-res-action',None) is None:
-		#		continue 
-		#	image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
-		#	a = customized.find('p',class_='dec f-brk').find('a')
-		#	title = a.string
-		#	id_ = a.get('href')[a.get('href').find('=')+1:]
-		#	description = customized.find('p',class_='idv f-brk s-fc4').get('title')
-		#	result = {
-		#		'image' : image,
-		#		'title' : title,
-		#		'id' : id_,
-		#		'description' : description
-		#	}
-		#	self._personal_customized.append(result)
-
 		cd_list = content.find('div',class_='n-disk').find_all('ul',class_='f-cb roller-flag')
 		for cds in cd_list:
 			for cd in cds.find_all('li'):
@@ -230,23 +258,24 @@ class NeteaseUser:
 	@staticmethod
 	def get_favor_song(uid):
 		resp = requests.get('http://music.163.com/api/user/playlist/?uid=%s&offset=0&limit=100'%str(uid),headers=headers,cookies=cookies)
+		song_list = []
+		status = True
 		try:
 			playlists = resp.json().get('playlist')
-			song_list = []
+			#print playlists
+			
 			for playlist in playlists:
 				song = {}
 				song['name'] = playlist.get('name')
-				song['name'] = playlist.get('id')
-				song['name'] = playlist.get('coverImgUrl')
-				song['name'] = playlist.get('trackCount')
+				song['id'] = playlist.get('id')
+				song['coverImgUrl'] = playlist.get('coverImgUrl')
+				song['trackCount'] = playlist.get('trackCount')
 				song_list.append(song)
 		except:
 			#出错，重新登录授权
-			pass
+			status = False
 
-
-		return song_list
-
+		return status,song_list
 
 class NeteaseSong:
 	
@@ -260,6 +289,11 @@ class NeteaseSong:
 	@classmethod
 	def parse_id(cls,name,artist,album):
 		ids = {}
+		if name.find("-") !=-1:
+			name = name[0:name.find("-")]
+		if name.find("(") !=-1:
+			name = name[0:name.find("(")]
+		print 'name',name 
 		keywords = name+' '+ artist+' '+album
 		song_list = NeteaseUser.get_search_result('1',keywords,'1')
 		if song_list is None:
@@ -268,6 +302,7 @@ class NeteaseSong:
 			'id' : song_list[0].get('song_id'),
 			'album_id' : song_list[0].get('song_album_id')
 		}
+		print ids
 		return ids
 
 	@classmethod
@@ -276,9 +311,10 @@ class NeteaseSong:
 		URL = 'http://music.163.com/api/album/%d/' % album_id
 		resp = requests.get(URL,cookies=cookies,headers=headers)
 		songs = resp.json().get('album').get('songs')
+		cover = resp.json().get('album').get('blurPicUrl')
 		for song in songs:
 			if song.get('id') == id_:
-				return song.get('mp3Url')
+				return song.get('mp3Url')+";"+cover
 
 
 #n = NeteaseUser('lidawn1991@163.com','***')

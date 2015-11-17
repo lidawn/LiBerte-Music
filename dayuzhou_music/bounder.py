@@ -66,10 +66,8 @@ def bound_netease(request):
 		if passwd.replace(' ','') == '':
 			return render(request,'bound_netease.html',{'message':message,})
 
-		nu = NU(netease_id,passwd)
-
-		message = nu.login()
-
+		nu = NU(netease_id)
+		message = nu.login(passwd)
 		#print message
 		if message['status']:
 			username = request.session.get('username')

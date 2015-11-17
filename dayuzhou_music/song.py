@@ -25,6 +25,20 @@ def get_link(request):
 		
 	return HttpResponse(link)
 
+@csrf_exempt
+def get_net_link(request):
+	if request.method=="POST":
+		name = request.POST.get('name')
+		artist = request.POST.get('artist')
+		album = request.POST.get('album')
+		ids = NS.parse_id(name,artist,album)
+		if ids :
+			link =  NS.get_link(ids.get('id'),ids.get('album_id'))
+		else:
+			link = ('404',)
+		
+	return HttpResponse(link)
+
 #def test_put(request):
 #	return render(request,'test_put.html')
 #

@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from Xiami import XiamiUser as XU , XiamiSong as XS
 from Netease import NeteaseUser as NU , NeteaseSong as NS
 from models import User
+import json
 
 @csrf_exempt
 def login(request):
@@ -107,41 +108,53 @@ def user_setting(request):
 
 def user_home(request):
 	'''用户主页，展示用户收藏'''
+	profile = {'status':True,'titleMsg':'发生错误'}
 	if request.method=="GET":
-		profile = {}
 		if request.session.get('is_login',False):
 			username = request.session.get('username')
 			profile['username'] = username
-
 			user = User.objects.get(username=username)
-			if user.bound_xiami : 
-				xu = XU(user.xiami_username,user.xiami_password)
-				if user.xiami_type == 1:     #xiami
-					message = xu.login_with_xiami()
-					if message['status']:
-						favor_song = xu.get_favor_song()
-						profile['favor_song_xiami'] = favor_song
-					else:
-						profile['message'] = '虾米登录错误'
-				else:
-					message = xu.login_with_xiami()
-					if message['status']:
-						favor_song = xu.get_favor_song()
-						profile['favor_song_xiami'] = favor_song
-					else:
-						profile['message'] = '虾米(淘宝)登录错误'
+			bound_xiami = user.bound_xiami
+			xiami_type = user.xiami_type
+			xiami_username = user.xiami_type
+			bound_netease = user.bound_netease
+			netease_username = user.netease_username
+			netease_uid = user.netease_uid
+			netease_cookies = user.netease_cookies
 
-			if user.bound_netease : 
-				uid = user.netease_uid
-				#不需要登录，这里只要用uid获取歌单就可以
-				favor_song = NU.get_favor_song(uid)
-				profile['favor_song_netease'] = favor_song
-				
-				if message['status']:
-					#favor_song = nu.get_favor_song()
-					pass
-				else:
-					profile['message'] = '网易登录错误'
+			#if bound_xiami : 
+			#	xu = XU(xiami_username,"***")
+			#	if user.xiami_type == 1:     #xiami
+			#		message = xu.login_with_xiami()
+			#		if message['status']:
+			#			favor_song = xu.get_favor_song()
+			#			profile['favor_song_xiami'] = favor_song
+			#		else:
+			#			profile['message'] = '虾米登录错误'
+			#	else:
+			#		message = xu.login_with_xiami()
+			#		if message['status']:
+			#			favor_song = xu.get_favor_song()
+			#			profile['favor_song_xiami'] = favor_song
+			#		else:
+			#			profile['message'] = '虾米(淘宝)登录错误'
+
+			if bound_netease : 
+				#收藏的歌单
+				nu = NU(netease_username)
+				ret = nu.get_favor_song(netease_uid)
+				if ret[0]:
+					profile['favor_song_netease'] = ret[1]
+				netease_cookies  = netease_cookies.replace('\'','\"')
+				cookies = json.loads(netease_cookies)
+				#个性化推荐 歌单 做不了 是post请求，需要密码。
+				#ret = nu.get_personal_customized(cookies)
+				#if ret[0]:
+				#	profile['customized_netease'] = ret[1]
+				#个性化 歌曲（taste）
+				ret = nu.get_personal_taste(cookies)
+				if ret[0]:
+					profile['taste_netease'] = ret[1]
 			
 			return render(request,'home.html',{'profile':profile,})
 			
