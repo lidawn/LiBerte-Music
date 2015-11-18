@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'search/','dayuzhou_music.search.search'),
     url(r'get_link/','dayuzhou_music.song.get_link'),
     url(r'get_net_link/','dayuzhou_music.song.get_net_link'),
-    url(r'^$','dayuzhou_music.views.index'),
+    url(r'^more/$','dayuzhou_music.views.index'),
     url(r'^bound/xiami/taobao/$','dayuzhou_music.bounder.bound_xiami_taobao'),
     url(r'^bound/xiami/$','dayuzhou_music.bounder.bound_xiami'),
     url(r'^login/$','dayuzhou_music.user.login'),
@@ -27,7 +27,8 @@ urlpatterns = patterns('',
     #TODO
     url(r'^findpasswd/$','dayuzhou_music.user.findpasswd'),
     url(r'^setting/$','dayuzhou_music.user.user_setting'),
-    url(r'^home/$','dayuzhou_music.user.user_home'),
+    url(r'^$','dayuzhou_music.user.user_home'),
+
     url(r'^player/$','dayuzhou_music.views.player'),
     #TOTEST
     url(r'^bound/netease/$','dayuzhou_music.bounder.bound_netease'),

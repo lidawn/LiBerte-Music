@@ -32,7 +32,7 @@ def index(request):
 			'result_netease' : result_netease,
 			'result_xiami' : result_xiami
 		}
-		return render(request,'index.html',{'results':results,})
+		return render(request,'more.html',{'results':results,})
 
 def player(request):
 	return render(request,'player.html')

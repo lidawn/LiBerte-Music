@@ -1,7 +1,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>首页</title>
+	<title>逛逛</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 </head>
 <body>
+{% include 'nav.html' %}
 <div class="container" style="padding-top:10px;">
 	{% include 'player.html' %}
 	<script type="text/javascript">

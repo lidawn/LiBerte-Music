@@ -1,7 +1,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>{{profile.username}}的个人主页</title>
+	<title>LiBerte Music</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
@@ -37,9 +37,8 @@
 </script>
 </head>
 <body>
+{% include 'nav.html' %}
 <div class="container" style="padding-top:10px;">
-	
-	<a href="/logout/">退出</a>
 	{% include 'player.html' %} 
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if profile%}
