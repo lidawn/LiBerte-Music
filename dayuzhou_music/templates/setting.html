@@ -7,9 +7,12 @@
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	// /this.parent.location.href = "/#/home/"
+	//console.log($(".fake"));
+</script>
 </head>
 <body>
-{% include 'nav.html' %}
 <div class="container" style="padding-top:10px;">
 	{% if profile %}
 	<h2>{{profile.username}}</h2>
@@ -22,8 +25,8 @@
 	<a href="/bound/netease/">绑定网易云音乐账户</a><br/>
 	{% endif %}
 
-	<a href="#">绑定虾米音乐账户</a><br/>
-	<a href="#">修改密码</a>
+	<a class="fake" href="#">绑定虾米音乐账户</a><br/>
+	<a href="/#/ttt/">修改密码</a>
 	<h3>主页设置</h3>
 	<a href="#">热门歌单</a><br/>
 	<a href="#">新碟上架</a><br/>

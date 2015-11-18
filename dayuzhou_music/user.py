@@ -162,3 +162,6 @@ def user_home(request):
 			return HttpResponseRedirect('/login/')
 		
 	return HttpResponseRedirect('/login/')
+
+def main(request):
+	return render(request,'main.html')
