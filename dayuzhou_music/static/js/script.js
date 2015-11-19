@@ -6,9 +6,9 @@ var repeat = localStorage.repeat || 0,
 	playlist = [
 		{
 			title: '我怀念的',
-			artist: '德国',
-			album: '德国第一装甲师进行曲.mp3',
-			cover:'',
+			artist: '孙燕姿',
+			album: '逆光',
+			cover:'http://p4.music.126.net/PehnaQ-BaAXeQg1d5s7leA==/6635552673699715.jpg',
 			mp3: 'http://m2.music.126.net/BsOGGfOS7CueDaj6_mJYtA==/6620159510912123.mp3',
 			ogg: ''
 		},

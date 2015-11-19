@@ -32,6 +32,7 @@ $(document).ready(function(){
 	_iframe = document.createElement('iframe');
 	_iframe.id = 'l_iframe';
 	_iframe.src = 'about:blank';
+	
 
 	document.body.insertAdjacentElement('beforeEnd',_iframe);
 	if(_url.indexOf("/",8) == _url.length - 1)

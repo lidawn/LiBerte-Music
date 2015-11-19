@@ -1,3 +1,13 @@
+#l_iframe{
+    width: 60%;
+    height: 100%;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    border-right-width: 0px;
+    border-left-width: 0px;
+    margin-top: 30px;
+}
+
 * { margin: 0; padding: 0; }
 body { font: 14px "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; background: #333; color: #fff; }
 
@@ -37,7 +47,7 @@ body { font: 14px "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-seri
 #player .ctrl .control .volume .mute { background-image: url(../images/volume.png); }
 #player .ctrl .control .volume .mute.enable { background-image: url(../images/mute.png); }
 #player .ctrl .control .volume .slider { margin-top: 11px; margin-left: 10px; width: 100px; }
-#player .ctrl .progress { margin-top: 10px; }
+#player .ctrl .progress { margin-top: 10px;height :40px;}
 #player .ctrl .progress .timer { font-size: 12px; color: #ccc; margin-top: 8px; }
 #player .ctrl .progress .repeat, #player .ctrl .progress .shuffle { background-position: center bottom; }
 #player .ctrl .progress .repeat { background-image: url(../images/repeat.png); }

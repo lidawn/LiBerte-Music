@@ -27,9 +27,13 @@
 							mp3: rarray[0],
 							ogg: ''
 							};
-							playlist.push(song);
+							window.parent.playlist.push(song);
 							//console.log(playlist);
-							$('#playlist').append('<li>'+song.artist+' - '+song.title+'</li>');
+							var ul = window.parent.document.getElementById("playlist");
+							console.log(ul);
+							var li = document.createElement('li');
+							li.textContent = song.artist+' - '+song.title;
+							ul.appendChild(li);
 					}
 				}
 			})
@@ -37,7 +41,7 @@
 </script>
 </head>
 <body>
-<div class="container" style="padding-top:10px;">
+<div style="padding-top:10px;padding-right: 0px;padding-left: 0px;">
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if profile%}
 	{% if not profile.status %}
@@ -103,7 +107,6 @@
 	-->
 	{% endif %}
 
-	
 </div>
 </body>
 </html>
