@@ -78,7 +78,7 @@ def register(request):
 		except User.DoesNotExist:
 			user = User(username=username,password=passwd)
 			user.save()
-			return HttpResponseRedirect('/home/setting/')
+			return HttpResponseRedirect('/setting/')
 		
 	return render(request,'register.html',{'message':message,})
 
