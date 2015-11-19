@@ -91,13 +91,12 @@ class NeteaseUser:
 				'nickname' : self._nickname,
 				'netease_cookie':netease_cookie
 			}
-			return message
 		else:
 			message = {
 				'status':False,
 				'titleMsg' :'发生错误'
 			}
-			return message
+		return message
 
 	def get_personal_customized(self,cookies):
 		URL = 'http://music.163.com/discover'
@@ -115,7 +114,7 @@ class NeteaseUser:
 		personal_customized = []
 		
 		for customized in customized_list:
-			print customized.string,
+			#print customized.string,
 			if customized.get('data-res-action',None) is None:
 				continue 
 			image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
@@ -190,8 +189,8 @@ class NeteaseUser:
 		resp = requests.post(URL,data=post_data,cookies=cookies,headers=headers)
 		#print '###song###'
 		results =  resp.json().get('result')
-		print results
-		print 'ke',keywords
+		#print results
+		#print 'ke',keywords
 		songs = results.get('songs')
 		count =  (lambda x,y: x if x<y else y)(results.get('songCount'),len(songs))
 
@@ -293,7 +292,7 @@ class NeteaseSong:
 			name = name[0:name.find("-")]
 		if name.find("(") !=-1:
 			name = name[0:name.find("(")]
-		print 'name',name 
+		#print 'name',name 
 		keywords = name+' '+ artist+' '+album
 		song_list = NeteaseUser.get_search_result('1',keywords,'1')
 		if song_list is None:
@@ -302,7 +301,7 @@ class NeteaseSong:
 			'id' : song_list[0].get('song_id'),
 			'album_id' : song_list[0].get('song_album_id')
 		}
-		print ids
+		#print ids
 		return ids
 
 	@classmethod

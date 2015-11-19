@@ -100,6 +100,8 @@ def user_setting(request):
 			
 			if bound_netease:
 				profile['netease_username'] = user.netease_username
+			if bound_xiami:
+				profile['xiami_username'] = user.xiami_username
 
 			return render(request,'setting.html',{'profile':profile,})
 		else:
@@ -116,28 +118,37 @@ def user_home(request):
 			user = User.objects.get(username=username)
 			bound_xiami = user.bound_xiami
 			xiami_type = user.xiami_type
-			xiami_username = user.xiami_type
+			xiami_username = user.xiami_username
+			xiami_headers = user.xiami_headers
 			bound_netease = user.bound_netease
 			netease_username = user.netease_username
 			netease_uid = user.netease_uid
 			netease_cookies = user.netease_cookies
 
-			#if bound_xiami : 
-			#	xu = XU(xiami_username,"***")
-			#	if user.xiami_type == 1:     #xiami
-			#		message = xu.login_with_xiami()
-			#		if message['status']:
-			#			favor_song = xu.get_favor_song()
-			#			profile['favor_song_xiami'] = favor_song
-			#		else:
-			#			profile['message'] = '虾米登录错误'
-			#	else:
-			#		message = xu.login_with_xiami()
-			#		if message['status']:
-			#			favor_song = xu.get_favor_song()
-			#			profile['favor_song_xiami'] = favor_song
-			#		else:
-			#			profile['message'] = '虾米(淘宝)登录错误'
+			if bound_xiami : 
+				#处理一下xiami cookie
+				xiami_headers = xiami_headers.replace('\'','\"')
+				dict = json.loads(xiami_headers)
+				sessid = dict.get('__XIAMI_SESSID')
+				cookie = dict.get('Cookie')
+				cookie += ('; __XIAMI_SESSID='+sessid)
+				del dict['__XIAMI_SESSID']
+				dict['Cookie'] = cookie
+				#print dict
+				xu = XU(xiami_username)
+				if user.xiami_type == 1:     #xiami
+					#虾米收藏歌曲 用什么形式展示？
+					#ret = xu.get_favor_song(dict)
+					#if ret[0]:
+					#	profile['favor_song_xiami'] = ret[1]
+					#个性化推荐 歌单 做不了 是post请求，需要密码。
+					#ret = nu.get_personal_customized(cookies)
+					#if ret[0]:
+					#	profile['customized_netease'] = ret[1]
+					#个性化 歌曲（taste）
+					ret = xu.get_personal_taste(dict)
+					if ret[0]:
+						profile['taste_xiami'] = ret[1]
 
 			if bound_netease : 
 				#收藏的歌单

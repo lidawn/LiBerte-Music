@@ -25,40 +25,60 @@ class XiamiUser:
 	#bs = BS(requests.get(url).content)
 
 	#http://www.xiami.com/index/recommend  猜你喜欢
-	def __init__(self,username,password):
+	def __init__(self,username):
 		self._username = username
-		self._password = password
 		self._session = requests.Session()
 		self._personal_customized = []			#猜你喜欢
 
 	def get_session(self):
 		return self._session
 
-	def login_with_xiami(self):
+	def login_with_xiami(self,password):
 		'''用虾米账号登录'''
 		URL = 'https://login.xiami.com/member/login'
 		post_data = {'_xiamitoken':'20f0e5a22def96dbe410f339a65e6600',
 					'done':'http://www.xiami.com',
 					'from':'web',
 					'email':self._username,
-					'password':self._password,
+					'password':password,
 					'submit':'登 录'}
 		self._session.post(URL,headers=headers,data=post_data)
 		resp = self._session.get('http://www.xiami.com/account',headers=headers)
 		content = BS(resp.content)
-		if content.find('div',class_='account').find('h2',class_='tit'):
-			 message = {
-			 	'status':True,
-			 	'titleMsg':''
-			 }
-			 
+
+		#虾米返回的是header
+		xiami_header = {}
+		if content.find('div',class_='account'):
+			nickname = content.find('div',class_='account').find('a',class_='avatar').get('title')
+			#是herf
+			uid = content.find('div',class_='account').find('a',class_='avatar').get('herf')[3:]
+			xiami_header = resp.request.headers
+			for key in resp.cookies.keys():
+				xiami_header[key] = resp.cookies[key]
+			#for key in resp.cookies.keys():
+			#	xiami_cookie[key] = resp.cookies[key]
+			message = {
+				'status':True,
+				'titleMsg' :'',
+				'nickname' : nickname,
+				'uid' : uid,
+				'xiami_header':str(xiami_header)
+			}
 		else:
 			message = {
-				'status' : False,
-				'titleMsg':'发生错误'
+				'status':False,
+				'titleMsg' :'发生错误'
 			}
+
+		#for key in resp.request.headers.get('cookie')keys():
+		#	xiami_cookie[key] = resp.cookies[key]
+		#after_headers = resp.request.headers
+		#print resp.request.headers.get('cookie')
+		##xiami_cookie['_xiamitoken'] = '20f0e5a22def96dbe410f339a65e6600'
+		#resp = requests.get('http://www.xiami.com/account',headers=after_headers)
+		#print "test",BS(resp.content).find('div',class_='account').find('a',class_='avatar').get('title')
+
 		return message
-		#return session
 
 	def login_with_taobao(self,captcha):
 		'''用淘宝账号登录
@@ -115,17 +135,45 @@ class XiamiUser:
 					'captcha_url' : None
 			}
 			return message
-			
-	def get_favor_song(self):
+	
+	#用header
+	def get_personal_taste(self,xiami_headers):
+		personal_taste = []
+		resp = requests.get('http://www.xiami.com/song/playlist-default/cat/json',headers=xiami_headers)
+		taste_list = resp.json().get('data').get('trackList')
+		for taste in taste_list:
+			id_ = taste.get('song_id')
+			name = taste.get('title')
+			duration = str(taste.get('length')/60) + ':' + str(taste.get('length')%60)
+			artist_id = taste.get('artist_id')
+			artist_name = taste.get('artist')
+			album_id = taste.get('album_id')
+			album_name = taste.get('album_name')
+			cover = taste.get('album_pic')
+			result = {
+					'id' : id_,
+					'name' : name,
+					'duration' : duration,
+					'artist_name' : artist_name,
+					'artist_id' : artist_id,
+					'album_name' : album_name,
+					'album_id' : album_id,
+					'cover' : cover
+			}
+			personal_taste.append(result)
+		return True,personal_taste
+
+	#用uid可以取到	
+	def get_favor_song(self,):
 		'''获取收藏歌曲'''
 		song_list = []
 		URL = 'http://www.xiami.com/space/lib-song/page/%d'
 		#session = self.login()
-		resp = self._session.get(URL%1,headers=headers)
-		if 'login' in resp.url:
-			#print 'not login'
-			self.login()
-			resp = self._session.get(URL%1,headers=headers)
+		resp = requests.get(URL%1,headers=headers)
+		#if 'login' in resp.url:
+		#	#print 'not login'
+		#	self.login()
+		#	resp = self._session.get(URL%1,headers=headers)
 
 		content = BS(resp.content)
 		#获取总歌曲数
@@ -227,7 +275,7 @@ class XiamiUser:
 						song_id = tr.find('td',class_='song_name').find('a',target='_blank').get('href')
 						song_id = song_id[song_id.rfind('/')+1:]
 					else:
-						#check(Netease)
+						#check(xiami)
 						song_id = '-1'
 					song = {
 					'song_id':song_id,

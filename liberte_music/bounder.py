@@ -36,6 +36,7 @@ def bound_xiami_taobao(request):
 def bound_xiami(request):
 	message = {'status':True,'titleMsg':'发生错误'}
 	if request.method=="POST":
+		#如果已绑定，跳走（还要解绑，检查cookie有效期）
 		xiami_id = request.POST.get('xiami_id')
 		passwd = request.POST.get('passwd')
 		
@@ -44,12 +45,22 @@ def bound_xiami(request):
 		if passwd.replace(' ','') == '':
 			return render(request,'bound_xiami.html',{'message':message,})
 
-		xu = XU(xiami_id,passwd)
-
-		message = xu.login_with_xiami()
+		xu = XU(xiami_id)
+		message = xu.login_with_xiami(passwd)
 		#print message
 		if message['status']:
-			return HttpResponseRedirect('/')
+			username = request.session.get('username')
+			user = User.objects.get(username=username)
+			user.bound_xiami = True
+			user.xiami_username = message['nickname']
+			user.xiami_uid = message['uid']
+			user.xiami_headers = message['xiami_header']
+			user.save()
+			profile = {
+				'username' : username,
+				'xiami_username' : message['nickname']
+			}
+			return HttpResponseRedirect('/setting/')
 		
 	return render(request,'bound_xiami.html',{'message':message,})
 
@@ -81,8 +92,7 @@ def bound_netease(request):
 				'username' : username,
 				'netease_username' : message['nickname']
 			}
-
-			return render(request,'setting.html',{'profile':profile,})
+			return HttpResponseRedirect('/setting/')
 		
 	return render(request,'bound_netease.html',{'message':message,})
 

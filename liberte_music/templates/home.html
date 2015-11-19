@@ -9,7 +9,9 @@
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 	function playsong(is_playable,id,name,artist,album){
-		$.ajax({
+		if(is_playable=="False"){
+			console.log("false");
+			$.ajax({
 				type : "POST",
 				//要重新写啊！！！！！！！
 				url : "/get_net_link/",
@@ -36,7 +38,40 @@
 							ul.appendChild(li);
 					}
 				}
-			})
+			});
+		}
+		else
+		{
+			console.log("true");
+			$.ajax({
+				type : "POST",
+				//要重新写啊！！！！！！！
+				url : "/get_link/",
+				data : {is_playable:is_playable,id:id,name:name,artist:artist,album:album},
+				dataType : "text",
+				success : function(ret){
+					if(ret != "404")
+					{
+						song = {
+							title: name,
+							artist: artist,
+							album: album,
+							cover:{{song.cover}},
+							mp3: ret,
+							ogg: ''
+							};
+							window.parent.playlist.push(song);
+							//console.log(playlist);
+							var ul = window.parent.document.getElementById("playlist");
+							console.log(ul);
+							var li = document.createElement('li');
+							li.textContent = song.artist+' - '+song.title;
+							ul.appendChild(li);
+					}
+				}
+			});
+		}
+		
 	}
 </script>
 </head>
@@ -50,7 +85,7 @@
 	<h2>{{profile.username}}的个人主页</h2>
 	<h3>今日个性化推荐</h3>
 	<div>
-	{%  if profile.taste_netease %}
+	{%  if profile.taste_netease or profile.taste_xiami %}
 	<table>
 	<tr>
 		<th>歌曲</th>
@@ -67,6 +102,18 @@
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
 	<td><a target="_blank" href="http://music.163.com/album?id={{song.album_id}}">{{song.album_name}}</a></td>
+	</tr>
+	{% endfor %}
+
+	{% for song in profile.taste_xiami %}
+	
+	<tr>
+	<td>
+	<a  href="#" onclick="playsong('True',{{song.id}},'{{song.name}}','{{song.artist_name}}','{{song.album_name}}')">{{song.name}}</a>
+	</td>
+	<td>{{song.duration}}</td>
+	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name}}</a></td>
+	<td><a target="_blank" href="http://www.xiami.com/album/{{song.album_id}}">{{song.album_name}}</a></td>
 	</tr>
 	{% endfor %}
 	</table>
