@@ -9,46 +9,22 @@ from Netease import NeteaseUser as NU , NeteaseSong as NS
 def get_link(request):
 	if request.method=="POST":
 		is_playable = request.POST.get('is_playable')
-		print is_playable
+		type = request.POST.get('type')
 		id_ = request.POST.get('id')
-		if is_playable == 'True' :
-			link =  XS.get_link(id_)
-		else:
-			name = request.POST.get('name')
-			artist = request.POST.get('artist')
-			album = request.POST.get('album')
-			ids = NS.parse_id(name,artist,album)
-			if ids :
-				link =  NS.get_link(ids.get('id'),ids.get('album_id'))
-			else:
-				link = '404'
-		
-	return HttpResponse(link)
-
-@csrf_exempt
-def get_net_link(request):
-	if request.method=="POST":
 		name = request.POST.get('name')
 		artist = request.POST.get('artist')
+		artist_id = request.POST.get('artist_id')
 		album = request.POST.get('album')
-		ids = NS.parse_id(name,artist,album)
-		if ids :
-			link =  NS.get_link(ids.get('id'),ids.get('album_id'))
+		album_id = request.POST.get('album_id')
+		cover = request.POST.get('cover')
+		if type=='n' and is_playable=='True':
+			link = NS.get_link(id_,album_id)
+		elif type=='x' and is_playable=='True':
+			link = XS.get_link(id_)+';'+cover
+		elif type=='n' and is_playable=='False':
+			pass
+		elif type=='x' and is_playable=='False':
+			pass
 		else:
-			link = ('404',)
-		
+			link = '404;404'
 	return HttpResponse(link)
-
-#def test_put(request):
-#	return render(request,'test_put.html')
-#
-#def test_get(request):
-#	return render(request,'test_get.html')
-#
-#def test_open(request):
-#	return render(request,'test_open.html')
-#
-#def add_song(request):
-#	if request.method=="GET":
-#		
-#		return HttpResponse("1235678")

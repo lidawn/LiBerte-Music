@@ -307,16 +307,10 @@ class NeteaseSong:
 	@classmethod
 	def get_link(cls,id_,album_id):
 		'''通过专辑id和歌曲id得到播放地址'''
-		URL = 'http://music.163.com/api/album/%d/' % album_id
+		URL = 'http://music.163.com/api/album/%s/' % album_id
 		resp = requests.get(URL,cookies=cookies,headers=headers)
 		songs = resp.json().get('album').get('songs')
 		cover = resp.json().get('album').get('blurPicUrl')
 		for song in songs:
-			if song.get('id') == id_:
+			if str(song.get('id')) == id_:
 				return song.get('mp3Url')+";"+cover
-
-
-#n = NeteaseUser('lidawn1991@163.com','***')
-#n.login()
-#s =  Song(287063,28520,'BE FREE (Voice Filter Mix) - remix',False,True)
-#s.get_link()

@@ -12,8 +12,7 @@ def index(request):
 			'new_cd' : netease_user.new_cd ,
 			'hot_recommend' : netease_user.hot_recommend,
 		}
-
-		xiami_user = XU('a','b')
+		xiami_user = XU('a')
 		xiami_user.get_discover()
 		
 		#cd做一下去重

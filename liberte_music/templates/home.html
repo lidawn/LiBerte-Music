@@ -8,70 +8,34 @@
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-	function playsong(is_playable,id,name,artist,album){
-		if(is_playable=="False"){
-			console.log("false");
-			$.ajax({
-				type : "POST",
-				//要重新写啊！！！！！！！
-				url : "/get_net_link/",
-				data : {is_playable:is_playable,id:id,name:name,artist:artist,album:album},
-				dataType : "text",
-				success : function(ret){
-					rarray = ret.split(";")
-					if(rarray[0] != "404")
-					{
-						song = {
-							title: name,
-							artist: artist,
-							album: album,
-							cover:rarray[1],
-							mp3: rarray[0],
-							ogg: ''
-							};
-							window.parent.playlist.push(song);
-							//console.log(playlist);
-							var ul = window.parent.document.getElementById("playlist");
-							console.log(ul);
-							var li = document.createElement('li');
-							li.textContent = song.artist+' - '+song.title;
-							ul.appendChild(li);
-					}
+	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
+		$.ajax({
+			type : "POST",
+			url : "/get_link/",
+			data : {is_playable:is_playable,type:type,id:id,name:name,artist:artist,artist_id:artist_id,album:album,album_id:album_id,cover:cover},
+			dataType : "text",
+			success : function(ret){
+				rarray = ret.split(";")
+				if(rarray[0] != "404")
+				{
+					song = {
+						title: name,
+						artist: artist,
+						album: album,
+						cover:rarray[1],
+						mp3: rarray[0],
+						ogg: ''
+						};
+						window.parent.playlist.push(song);
+						//console.log(playlist);
+						var ul = window.parent.document.getElementById("playlist");
+						console.log(ul);
+						var li = document.createElement('li');
+						li.textContent = song.artist+' - '+song.title;
+						ul.appendChild(li);
 				}
-			});
-		}
-		else
-		{
-			console.log("true");
-			$.ajax({
-				type : "POST",
-				//要重新写啊！！！！！！！
-				url : "/get_link/",
-				data : {is_playable:is_playable,id:id,name:name,artist:artist,album:album},
-				dataType : "text",
-				success : function(ret){
-					if(ret != "404")
-					{
-						song = {
-							title: name,
-							artist: artist,
-							album: album,
-							cover:{{song.cover}},
-							mp3: ret,
-							ogg: ''
-							};
-							window.parent.playlist.push(song);
-							//console.log(playlist);
-							var ul = window.parent.document.getElementById("playlist");
-							console.log(ul);
-							var li = document.createElement('li');
-							li.textContent = song.artist+' - '+song.title;
-							ul.appendChild(li);
-					}
-				}
-			});
-		}
-		
+			}
+		});
 	}
 </script>
 </head>
@@ -97,7 +61,7 @@
 	
 	<tr>
 	<td>
-	<a  href="#" onclick="playsong('False',{{song.id}},'{{song.name}}','{{song.artist_name}}','{{song.album_name}}')">{{song.name}}</a>
+	<a  href="#" onclick="playsong('True','n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','cover')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
@@ -109,7 +73,7 @@
 	
 	<tr>
 	<td>
-	<a  href="#" onclick="playsong('True',{{song.id}},'{{song.name}}','{{song.artist_name}}','{{song.album_name}}')">{{song.name}}</a>
+	<a  href="#" onclick="playsong('True','x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','{{song.cover}}')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name}}</a></td>
@@ -132,7 +96,7 @@
 	<h3>个人收藏</h3>
 	{%  if profile.favor_song_netease %}
 	{% for song_list in profile.favor_song_netease %}
-	<img src="{{song_list.coverImgUrl}}">
+	<img src="{{song_list.coverImgUrl}}" class="img-circle" width="140" height="140">
 	<a target="_blank" href="http://music.163.com/playlist?id={{song_list.id}}">{{song_list.name}}</a>
 	<p>共 <strong>{{song_list.trackCount}}</strong> 首</p>
 	{% endfor %}
