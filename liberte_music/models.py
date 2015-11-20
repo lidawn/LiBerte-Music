@@ -12,4 +12,5 @@ class User(models.Model):
 	bound_netease = models.BooleanField(default=False)
 	netease_username =  models.CharField(max_length=100)
 	netease_uid = models.CharField(max_length=40)
+	netease_playlist = models.CharField(max_length=40)		#默认歌单的id
 	netease_cookies = models.CharField(max_length=1000)

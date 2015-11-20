@@ -16,14 +16,16 @@ user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64)
 			'''
 headers = {'user-Agent':user_agent,'connection':'keep-alive'}
 
+url = 'https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=0.9090916193090379'
+bs = BS(requests.get(url).content)
+
 class XiamiUser:
 	'''虾米用户'''
 	hot_recommend = []		#精选集
 	new_cd = []				#新碟首发
 	daxia = []				#大虾推荐
-	#url = 'https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=0.9090916193090379'
-	#bs = BS(requests.get(url).content)
-
+	
+	bs = bs
 	#http://www.xiami.com/index/recommend  猜你喜欢
 	def __init__(self,username):
 		self._username = username
@@ -70,17 +72,9 @@ class XiamiUser:
 				'titleMsg' :'发生错误'
 			}
 
-		#for key in resp.request.headers.get('cookie')keys():
-		#	xiami_cookie[key] = resp.cookies[key]
-		#after_headers = resp.request.headers
-		#print resp.request.headers.get('cookie')
-		##xiami_cookie['_xiamitoken'] = '20f0e5a22def96dbe410f339a65e6600'
-		#resp = requests.get('http://www.xiami.com/account',headers=after_headers)
-		#print "test",BS(resp.content).find('div',class_='account').find('a',class_='avatar').get('title')
-
 		return message
 
-	def login_with_taobao(self,captcha):
+	def login_with_taobao(self,password,captcha):
 		'''用淘宝账号登录
 		'''
 		check_url = 'https://passport.alipay.com/newlogin/account/check.do?fromSite=0'
@@ -94,7 +88,7 @@ class XiamiUser:
 		rsa_n = int(self.bs.find('input', {"id": "fm-modulus"}).get('value'), base=16)
 		rsa_e = 65537
 		public_key = rsa.PublicKey(rsa_n, rsa_e)
-		encrypted_password = rsa.encrypt(self._password.encode('utf-8'), public_key).encode('hex')
+		encrypted_password = rsa.encrypt(password.encode('utf-8'), public_key).encode('hex')
 		data = {
 			'loginId': self._username,
 			'password2': encrypted_password,
@@ -112,7 +106,13 @@ class XiamiUser:
 		headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
 
 		ret = self._session.post('https://passport.alipay.com/newlogin/login.do?fromSite=0',headers=headers,data=data)
-		print ret
+		if ret.text == '':
+			message = {
+					'status' : True,
+					'titleMsg' : '发生错误',
+					'captcha_url' : None
+			}
+			return message
 		ret = ret.json()
 		# 验证码
 		#print ret['content']
@@ -123,18 +123,41 @@ class XiamiUser:
 					'titleMsg' : ret['content']['data'].get('titleMsg', ''),
 					'captcha_url' : ret['content']['data'].get('checkCodeLink')
 				}
-				return message
 		else:
 			#登录成功, 将 st 传递给虾米
 			st = ret['content']['data']['st']
 			headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
 			ret = self._session.get('http://www.xiami.com/accounts/back?st=' + st,headers=headers)
-			message = {
+
+			resp = self._session.get('http://www.xiami.com/account',headers=headers)
+			content = BS(resp.content)
+
+			#虾米返回的是header
+			xiami_header = {}
+			if content.find('div',class_='account'):
+				nickname = content.find('div',class_='account').find('a',class_='avatar').get('title')
+				#是herf
+				uid = content.find('div',class_='account').find('a',class_='avatar').get('herf')[3:]
+				xiami_header = resp.request.headers
+				for key in resp.cookies.keys():
+					xiami_header[key] = resp.cookies[key]
+				#for key in resp.cookies.keys():
+				#	xiami_cookie[key] = resp.cookies[key]
+				message = {
 					'status' : True,
 					'titleMsg' : None,
+					'captcha_url' : None,
+					'nickname' : nickname,
+					'uid' : uid,
+					'xiami_header':str(xiami_header)
+				}
+			else:
+				message = {
+					'status' : True,
+					'titleMsg' : '发生错误',
 					'captcha_url' : None
-			}
-			return message
+				}
+		return message
 	
 	#用header
 	def get_personal_taste(self,xiami_headers):
@@ -216,9 +239,27 @@ class XiamiUser:
 	def get_favor_artist(self):
 		pass
 
-	def set_favor_song(self):
+	@staticmethod
+	def set_favor_song(id_,token,xiami_cookie):
 		'''收藏一首歌'''
-		pass
+		URL = 'http://www.xiami.com/ajax/addtag'
+		data = {
+			'tags':'like',
+			'type':3,
+			'id':id_,
+			'desc':'like',
+			'grade':5,
+			'share':0,
+			'shareTo':'all',
+			'_xiamitoken':token
+		}
+		headers = {'user-Agent':user_agent,'connection':'keep-alive','Referer':'http://www.xiami.com/song/'+id_}
+		#xiami_headers['Referer'] =  'http://www.xiami.com/song/'+id_
+
+		resp = requests.post(URL,data=data,headers=headers,cookies=xiami_cookie)
+		if resp.json().get('status') =='ok':
+			return True
+		return False
 
 	def set_favor_album(self):
 		pass
@@ -477,9 +518,5 @@ class XiamiSong:
 
 		return real_url
 
-#u = XiamiUser('lidawn1991@163.com','**')
-#u.login_with_xiami()
-#s = Song('1239160','Smells Like Teen Spirit' ,True ,True)
-#print s.get_link()
-#c.get_favor_song()
+
 		

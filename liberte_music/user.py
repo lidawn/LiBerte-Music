@@ -126,17 +126,17 @@ def user_home(request):
 			netease_cookies = user.netease_cookies
 
 			if bound_xiami : 
-				#处理一下xiami cookie
+				#处理一下xiami cookie 不要加session id
 				xiami_headers = xiami_headers.replace('\'','\"')
 				dict = json.loads(xiami_headers)
-				sessid = dict.get('__XIAMI_SESSID')
-				cookie = dict.get('Cookie')
-				cookie += ('; __XIAMI_SESSID='+sessid)
+				#sessid = dict.get('__XIAMI_SESSID')
+				#cookie = dict.get('Cookie')
+				#cookie += ('; __XIAMI_SESSID='+sessid)
 				del dict['__XIAMI_SESSID']
-				dict['Cookie'] = cookie
+				#dict['Cookie'] = cookie
 				#print dict
 				xu = XU(xiami_username)
-				if user.xiami_type == 1:     #xiami
+				#if user.xiami_type == 1:     #xiami
 					#虾米收藏歌曲 用什么形式展示？
 					#ret = xu.get_favor_song(dict)
 					#if ret[0]:
@@ -146,9 +146,10 @@ def user_home(request):
 					#if ret[0]:
 					#	profile['customized_netease'] = ret[1]
 					#个性化 歌曲（taste）
-					ret = xu.get_personal_taste(dict)
-					if ret[0]:
-						profile['taste_xiami'] = ret[1]
+				print dict
+				ret = xu.get_personal_taste(dict)
+				if ret[0]:
+					profile['taste_xiami'] = ret[1]
 
 			if bound_netease : 
 				#收藏的歌单

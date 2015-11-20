@@ -18,14 +18,17 @@
 
 	{% if profile.netease_username %}
 	<p>已绑定网易云音乐账户:<strong>{{profile.netease_username}}</strong></p>
+	<a class="fake" href="/#/unbound/netease/">解绑</a><br/>
 	{% else %}
 	<a class="fake" href="/#/bound/netease/">绑定网易云音乐账户</a><br/>
 	{% endif %}
 	<!--页内伪跳转-->
 	{% if profile.xiami_username %}
-	<p>已绑定虾米账户:<strong>{{profile.xiami_username}}</strong></p>
+	<p>已绑定虾米账户:<strong>{{profile.xiami_username}}</strong>
+	</p><a class="fake" href="/#/unbound/xiami/">解绑</a><br/>
 	{% else %}
 	<a class="fake" href="/#/bound/xiami/">绑定虾米账户</a><br/>
+	<a class="fake" href="/#/bound/xiami/taobao/">绑定虾米(淘宝)账户</a><br/>
 	{% endif %}
 
 	<a class="fake" href="/#/ttt/">修改密码</a>

@@ -25,14 +25,28 @@
 						cover:rarray[1],
 						mp3: rarray[0],
 						ogg: ''
-						};
-						window.parent.playlist.push(song);
-						//console.log(playlist);
-						var ul = window.parent.document.getElementById("playlist");
-						console.log(ul);
-						var li = document.createElement('li');
-						li.textContent = song.artist+' - '+song.title;
-						ul.appendChild(li);
+					};
+					window.parent.playlist.push(song);
+					//console.log(playlist);
+					var ul = window.parent.document.getElementById("playlist");
+					console.log(ul);
+					var li = document.createElement('li');
+					li.textContent = song.artist+' - '+song.title;
+					ul.appendChild(li);
+				}
+			}
+		});
+	}
+	function favorsong(type,id,name,artist,artist_id,album,album_id){
+		$.ajax({
+			type : "POST",
+			url : "/add_to_playlist/",
+			data : {type:type,id:id,name:name,artist:artist,artist_id:artist_id,album:album,album_id:album_id},
+			dataType : "text",
+			success : function(ret){
+				if(ret == "True")
+				{
+					console.log("Yes");
 				}
 			}
 		});
@@ -61,7 +75,7 @@
 	
 	<tr>
 	<td>
-	<a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','cover')">{{song.name}}</a>
+	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','cover')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
@@ -73,7 +87,7 @@
 	
 	<tr>
 	<td>
-	<a  href="javascript:;" onclick="playsong('True','x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','{{song.cover}}')">{{song.name}}</a>
+	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','{{song.cover}}')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name}}</a></td>

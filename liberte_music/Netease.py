@@ -167,6 +167,23 @@ class NeteaseUser:
 			personal_taste.append(result)
 		return True,personal_taste
 
+	@staticmethod
+	def add_to_playlist(track_id,playlist_id,cookies):
+		#cookie 传进来是个字典
+		cookies['appver'] = '2.0.2'
+		data = {
+			'trackIds':'["'+track_id+'"]',
+			'pid':playlist_id,
+			'op':'add',
+			'imme':'true'
+		}
+		resp = requests.post('http://music.163.com/api/v1/playlist/manipulate/tracks',data=data,cookies=cookies,headers=headers)
+		if resp.status_code ==200:
+			return True
+		return False
+		
+		#return True,personal_taste
+
 	@classmethod
 	def search(cls,keywords):
 		return cls.get_search_result('1',keywords,'100')			#单曲
