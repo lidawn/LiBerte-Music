@@ -102,7 +102,7 @@ class XiamiUser:
 			'checkCode':captcha
 		}
 
-		print 'data',data
+		#print 'data',data
 		headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
 
 		ret = self._session.post('https://passport.alipay.com/newlogin/login.do?fromSite=0',headers=headers,data=data)

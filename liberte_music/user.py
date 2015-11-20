@@ -109,7 +109,7 @@ def user_setting(request):
 	return HttpResponseRedirect('/login/')
 
 def user_home(request):
-	'''用户主页，展示用户收藏'''
+	'''展示每日推荐'''
 	profile = {'status':True,'titleMsg':'发生错误'}
 	if request.method=="GET":
 		if request.session.get('is_login',False):
@@ -129,34 +129,13 @@ def user_home(request):
 				#处理一下xiami cookie 不要加session id
 				xiami_headers = xiami_headers.replace('\'','\"')
 				dict = json.loads(xiami_headers)
-				#sessid = dict.get('__XIAMI_SESSID')
-				#cookie = dict.get('Cookie')
-				#cookie += ('; __XIAMI_SESSID='+sessid)
 				del dict['__XIAMI_SESSID']
-				#dict['Cookie'] = cookie
-				#print dict
 				xu = XU(xiami_username)
-				#if user.xiami_type == 1:     #xiami
-					#虾米收藏歌曲 用什么形式展示？
-					#ret = xu.get_favor_song(dict)
-					#if ret[0]:
-					#	profile['favor_song_xiami'] = ret[1]
-					#个性化推荐 歌单 做不了 是post请求，需要密码。
-					#ret = nu.get_personal_customized(cookies)
-					#if ret[0]:
-					#	profile['customized_netease'] = ret[1]
-					#个性化 歌曲（taste）
-				print dict
 				ret = xu.get_personal_taste(dict)
 				if ret[0]:
 					profile['taste_xiami'] = ret[1]
 
 			if bound_netease : 
-				#收藏的歌单
-				nu = NU(netease_username)
-				ret = nu.get_favor_song(netease_uid)
-				if ret[0]:
-					profile['favor_song_netease'] = ret[1]
 				netease_cookies  = netease_cookies.replace('\'','\"')
 				cookies = json.loads(netease_cookies)
 				#个性化推荐 歌单 做不了 是post请求，需要密码。
@@ -164,11 +143,72 @@ def user_home(request):
 				#if ret[0]:
 				#	profile['customized_netease'] = ret[1]
 				#个性化 歌曲（taste）
+				nu = NU(netease_username)
 				ret = nu.get_personal_taste(cookies)
 				if ret[0]:
 					profile['taste_netease'] = ret[1]
 			
 			return render(request,'home.html',{'profile':profile,})
+			
+		else:
+			return HttpResponseRedirect('/login/')
+		
+	return HttpResponseRedirect('/login/')
+
+def user_home_netease(request):
+	'''展示网易收藏'''
+	profile = {'status':True,'titleMsg':'发生错误'}
+	if request.method=="GET":
+		if request.session.get('is_login',False):
+			username = request.session.get('username')
+			profile['username'] = username
+			user = User.objects.get(username=username)
+			bound_netease = user.bound_netease
+			netease_username = user.netease_username
+			netease_uid = user.netease_uid
+
+			if bound_netease : 
+				#收藏的歌单
+				nu = NU(netease_username)
+				ret = nu.get_favor_song(netease_uid)
+				if ret[0]:
+					profile['favor_song_netease'] = ret[1]
+				#个性化推荐 歌单 做不了 是post请求，需要密码。
+				#ret = nu.get_personal_customized(cookies)
+				#if ret[0]:
+				#	profile['customized_netease'] = ret[1]
+			
+			return render(request,'home_netease.html',{'profile':profile,})
+
+		else:
+			return HttpResponseRedirect('/login/')
+		
+	return HttpResponseRedirect('/login/')
+
+def user_home_xiami(request):
+	'''展示虾米收藏'''
+	profile = {'status':True,'titleMsg':'发生错误'}
+	if request.method=="GET":
+		if request.session.get('is_login',False):
+			username = request.session.get('username')
+			profile['username'] = username
+			user = User.objects.get(username=username)
+			bound_xiami = user.bound_xiami
+			xiami_type = user.xiami_type
+			xiami_username = user.xiami_username
+			xiami_headers = user.xiami_headers
+
+			if bound_xiami : 
+				#处理一下xiami cookie 不要加session id
+				xiami_headers = xiami_headers.replace('\'','\"')
+				dict = json.loads(xiami_headers)
+				del dict['__XIAMI_SESSID']
+				xu = XU(xiami_username)
+				ret = xu.get_personal_taste(dict)
+				if ret[0]:
+					profile['taste_xiami'] = ret[1]
+
+			return render(request,'home_xiami.html',{'profile':profile,})
 			
 		else:
 			return HttpResponseRedirect('/login/')

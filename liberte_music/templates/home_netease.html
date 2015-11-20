@@ -1,4 +1,5 @@
-<!--该页面的歌曲默认全部是能够播放的-->
+<!--该页面的歌曲不一定都能播放-->
+<!--增加播放事件-->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -63,48 +64,20 @@
 	{% endif %}
 	
 	<ul class="nav nav-tabs">
-  		<li role="presentation"  class="active"><a href="javascript:;">今日推荐</a></li>
-  		<li role="presentation"><a class="fake" href="/#/home/netease/">网易收藏</a></li>
-  		<li role="presentation"><a href="/#/home/xiami/">虾米收藏</a></li>
+  		<li role="presentation"><a class="fake" href="/#/">今日推荐</a></li>
+  		<li role="presentation" class="active"><a href="javascript:;">网易收藏</a></li>
+  		<li role="presentation"><a class="fake" href="/#/home/xiami/">虾米收藏</a></li>
 	</ul>
 	<br/>
-	<div>
-	{%  if profile.taste_netease or profile.taste_xiami %}
-	<table>
-	<tr>
-		<th>歌曲</th>
-		<th>时长</th>
-		<th>歌手</th>
-		<th>专辑</th>
-	</tr>
-	{% for song in profile.taste_netease %}
-	
-	<tr>
-	<td>
-	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','cover')">{{song.name}}</a>
-	</td>
-	<td>{{song.duration}}</td>
-	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
-	<td><a target="_blank" href="http://music.163.com/album?id={{song.album_id}}">{{song.album_name}}</a></td>
-	</tr>
-	{% endfor %}
 
-	{% for song in profile.taste_xiami %}
-	
-	<tr>
-	<td>
-	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','{{song.cover}}')">{{song.name}}</a>
-	</td>
-	<td>{{song.duration}}</td>
-	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name}}</a></td>
-	<td><a target="_blank" href="http://www.xiami.com/album/{{song.album_id}}">{{song.album_name}}</a></td>
-	</tr>
+	{%  if profile.favor_song_netease %}
+	{% for song_list in profile.favor_song_netease %}
+	<img src="{{song_list.coverImgUrl}}" class="img-circle" width="140" height="140">
+	<a target="_blank" href="http://music.163.com/playlist?id={{song_list.id}}">{{song_list.name}}</a>
+	<p>共 <strong>{{song_list.trackCount}}</strong> 首</p>
 	{% endfor %}
-	</table>
-	<br/>
 	{% endif %}
-	</div>
-
+	
 	{% endif %}
 
 </div>
