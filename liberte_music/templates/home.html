@@ -64,8 +64,12 @@
 	
 	<ul class="nav nav-tabs">
   		<li role="presentation"  class="active"><a href="javascript:;">今日推荐</a></li>
+  		{% if profile.bound_netease %}
   		<li role="presentation"><a class="fake" href="/#/home/netease/">网易收藏</a></li>
-  		<li role="presentation"><a href="/#/home/xiami/">虾米收藏</a></li>
+  		{% endif %}
+  		{% if profile.bound_xiami %}
+  		<li role="presentation"><a class="fake" href="/#/home/xiami/">虾米收藏</a></li>
+  		{% endif %}
 	</ul>
 	<br/>
 	<div>
@@ -102,6 +106,12 @@
 	{% endfor %}
 	</table>
 	<br/>
+	{% else %}
+	<h3>请绑定<a class="fake" href="/#/bound/netease/">网易云音乐</a>或者
+	<a class="fake" href="/#/bound/xiami/">虾米</a>
+	<a class="fake" style="color: red;" href="/#/bound/xiami/taobao/">(淘宝)</a>
+	音乐
+	</h3>
 	{% endif %}
 	</div>
 

@@ -66,7 +66,9 @@
 	<ul class="nav nav-tabs">
   		<li role="presentation"><a class="fake" href="/#/">今日推荐</a></li>
   		<li role="presentation" class="active"><a href="javascript:;">网易收藏</a></li>
+  		{% if profile.bound_xiami %}
   		<li role="presentation"><a class="fake" href="/#/home/xiami/">虾米收藏</a></li>
+  		{% endif %}
 	</ul>
 	<br/>
 

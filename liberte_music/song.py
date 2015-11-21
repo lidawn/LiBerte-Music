@@ -22,7 +22,14 @@ def get_link(request):
 		if type=='n' and is_playable=='True':
 			link = NS.get_link(id_,album_id)
 		elif type=='x' and is_playable=='True':
-			link = XS.get_link(id_)+';'+cover
+			#不一定有封面的
+			if cover!='cover':
+				#有封面
+				link = XS.get_link(id_,True)+';'+cover
+			else:
+				#无封面
+				link = XS.get_link(id_,False)
+
 		elif type=='n' and is_playable=='False':
 			pass
 		elif type=='x' and is_playable=='False':
@@ -58,16 +65,16 @@ def add_to_playlist(request):
 		elif type=='x':
 			xiami_headers = user.xiami_headers
 			xiami_headers = xiami_headers.replace('\'','\"')
-			dict = json.loads(xiami_headers)
-			index_s = dict.get('Cookie').find('_xiamitoken')
-			index_s = dict.get('Cookie').find('=',index_s)
-			index_e = dict.get('Cookie').find(';',index_s)
+			dic = json.loads(xiami_headers)
+			index_s = dic.get('Cookie').find('_xiamitoken')
+			index_s = dic.get('Cookie').find('=',index_s)
+			index_e = dic.get('Cookie').find(';',index_s)
 			if index_e!=-1:
-				token = dict.get('Cookie')[index_s+1:index_e]
+				token = dic.get('Cookie')[index_s+1:index_e]
 			else:
-				token = dict.get('Cookie')[index_s+1:]
-			sessid = dict.get('__XIAMI_SESSID')
-			cookie = dict.get('Cookie')
+				token = dic.get('Cookie')[index_s+1:]
+			sessid = dic.get('__XIAMI_SESSID')
+			cookie = dic.get('Cookie')
 			cookie += ('; __XIAMI_SESSID='+sessid)
 			li = cookie.split(';')
 			xiami_cookie = {}

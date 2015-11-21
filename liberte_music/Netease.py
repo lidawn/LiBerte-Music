@@ -318,7 +318,7 @@ class NeteaseSong:
 			'id' : song_list[0].get('song_id'),
 			'album_id' : song_list[0].get('song_album_id')
 		}
-		#print ids
+		
 		return ids
 
 	@classmethod

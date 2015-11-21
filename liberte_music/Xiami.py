@@ -30,7 +30,6 @@ class XiamiUser:
 	def __init__(self,username):
 		self._username = username
 		self._session = requests.Session()
-		self._personal_customized = []			#猜你喜欢
 
 	def get_session(self):
 		return self._session
@@ -186,51 +185,48 @@ class XiamiUser:
 			personal_taste.append(result)
 		return True,personal_taste
 
-	#用uid可以取到	
-	def get_favor_song(self,):
+	#用headers可以取到
+	def get_favor_song(self,xiami_headers,page):
 		'''获取收藏歌曲'''
 		song_list = []
-		URL = 'http://www.xiami.com/space/lib-song/page/%d'
-		#session = self.login()
-		resp = requests.get(URL%1,headers=headers)
-		#if 'login' in resp.url:
-		#	#print 'not login'
-		#	self.login()
-		#	resp = self._session.get(URL%1,headers=headers)
-
+		URL = 'http://www.xiami.com/space/lib-song/page/'+page
+		resp = requests.get(URL,headers=xiami_headers)
 		content = BS(resp.content)
+		#加一个是否抓取成功的判断
 		#获取总歌曲数
 		song_total = content.find('div',class_='all_page').find('span').string
 		song_total = song_total[song_total.find(u'共')+1 : -2]
 		#总页数
 		page_total = (lambda x : (x/25 + 1) if x % 25 else (x/25))(int(song_total))
-		for p in range(page_total):
-			song_name_list = content.find_all('td',class_='song_name')
-			song_act_list = content.find_all('div',class_='song_do')
-			length = len(song_name_list)
-			for i in range(length):
-				song_name = song_name_list[i].find('a').string.encode('utf-8')
-				song_id = song_name_list[i].find('a').get('href')
-				song_id = song_id[song_id.rfind('/')+1:]
-				song_is_favored = True
-				#print song_act_list[i].find('a').get('onclick').find('play')
-				if song_act_list[i].find('a').get('onclick').find('play') == 0:
-					song_is_playable = True
-				else:
-					song_is_playable = False
-				#print song_id,song_name,song_is_favored,song_is_playable
-				song = {
-					'song_id':song_id,
-					'song_name':song_name,
-					'song_is_favored':song_is_favored,
-					'song_is_playable':song_is_playable
-				}
-				song_list.append(song)
-			if p == page_total:
-				break
-			resp = self._session.get(URL%(p+2),headers=headers)
-			content = BS(resp.content)
-		return song_list
+		if int(page)>int(page_total):
+			return page_total,[]
+		song_name_list = content.find_all('td',class_='song_name')
+		song_act_list = content.find_all('div',class_='song_do')
+		length = len(song_name_list)
+		for i in range(length):
+			song_name = song_name_list[i].find('a').string.encode('utf-8')
+			print song_name
+			artist_name = song_name_list[i].find('a',class_='artist_name').string.encode('utf-8')
+			song_id = song_name_list[i].find('a').get('href')
+			song_id = song_id[song_id.rfind('/')+1:]
+			artist_id = song_name_list[i].find('a',class_='artist_name').get('href')
+			artist_id = song_id[song_id.rfind('/')+1:]
+			#print song_act_list[i].find('a').get('onclick').find('play')
+			if song_act_list[i].find('a').get('onclick').find('play') == 0:
+				song_is_playable = True
+			else:
+				song_is_playable = False
+			#print song_id,song_name,song_is_favored,song_is_playable
+			song = {
+				'song_id':song_id,
+				'song_name':song_name,
+				'artist_name':artist_name,
+				'artist_id':artist_id,
+				'song_is_playable':song_is_playable
+			}
+			song_list.append(song)
+			
+		return page_total,song_list
 	
 	def get_favor_album(self):
 		'''获取收藏专辑;TODO'''
@@ -424,14 +420,15 @@ class XiamiSong:
 		self._is_playable = is_playable #是否可播放
 
 	@classmethod
-	def get_link(cls,id_):
+	def get_link(cls,id_,is_cover):
 	 	url = 'http://www.xiami.com/song/playlist/id/'+id_
 		xml = requests.get(url,headers=headers)
 		#print xml.content
 		pattern = re.compile(r'<location>(.*)</location>',re.S)
 		result = pattern.findall(xml.content)
 		link_encode =  result[0]
-		link_encode =  link_encode[1:]
+		if link_encode[0]!='h':
+			link_encode =  link_encode[link_encode.find('h'):]
 		#解密乱码得到真实url
 		length_1 = link_encode.find('t',0)
 		length_2 = link_encode.find('t',length_1+1)
@@ -515,7 +512,12 @@ class XiamiSong:
 				real_url = real_url[0:index] + '?' + real_url[index+3:]
 			elif real_url[index:index+3] == '%3D' :
 				real_url = real_url[0:index] + '=' + real_url[index+3:]
-
+		if not is_cover:
+			pattern = re.compile(r'<album_pic>(.*)</album_pic>',re.S)
+			result = pattern.findall(xml.content)
+			cover =  result[0]
+			return real_url+';'+cover
+				
 		return real_url
 
 

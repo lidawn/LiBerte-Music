@@ -31,11 +31,10 @@ urlpatterns = patterns('',
     url(r'^setting/$','liberte_music.user.user_setting'),
     url(r'^$','liberte_music.user.main'),
     url(r'^home/$','liberte_music.user.user_home'),
+    url(r'^home/xiami/(?P<page>\d+)/$','liberte_music.user.user_home_xiami'),
     url(r'^home/xiami/$','liberte_music.user.user_home_xiami'),
     url(r'^home/netease/$','liberte_music.user.user_home_netease'),
 
-    url(r'^player/$','liberte_music.views.player'),
-    #TOTEST
     url(r'^bound/netease/$','liberte_music.bounder.bound_netease'),
     #test
    #url(r'^test_put/$','liberte_music.song.test_put'),

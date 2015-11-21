@@ -32,6 +32,3 @@ def index(request):
 			'result_xiami' : result_xiami
 		}
 		return render(request,'more.html',{'results':results,})
-
-def player(request):
-	return render(request,'player.html')
