@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^search/','liberte_music.search.search'),
     url(r'^get_link/','liberte_music.song.get_link'),
+    url(r'^get_playlist_links/','liberte_music.song.get_playlist_links'),
     url(r'^add_to_playlist/','liberte_music.song.add_to_playlist'),
     url(r'^more/$','liberte_music.views.index'),
     url(r'^bound/xiami/taobao/$','liberte_music.bounder.bound_xiami_taobao'),
@@ -36,6 +37,10 @@ urlpatterns = patterns('',
     url(r'^home/netease/$','liberte_music.user.user_home_netease'),
 
     url(r'^bound/netease/$','liberte_music.bounder.bound_netease'),
+
+    url(r'^netease/playlist/(?P<id>\d+)/$','liberte_music.detail.netease_playlist'),
+    url(r'^xiami/playlist/(?P<id>\d+)/$','liberte_music.detail.xiami_playlist'),
+   
     #test
    #url(r'^test_put/$','liberte_music.song.test_put'),
     #url(r'^test_get/$','liberte_music.song.test_get'),

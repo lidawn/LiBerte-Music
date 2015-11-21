@@ -1,5 +1,6 @@
 <!--该页面的歌曲不一定都能播放-->
 <!--增加播放事件-->
+<!--增加detail-->
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -10,11 +11,11 @@
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
+	function playlist(type,id){
 		$.ajax({
 			type : "POST",
-			url : "/get_link/",
-			data : {is_playable:is_playable,type:type,id:id,name:name,artist:artist,artist_id:artist_id,album:album,album_id:album_id,cover:cover},
+			url : "/get_playlist_links/",
+			data : {type:type,id:id},
 			dataType : "text",
 			success : function(ret){
 				rarray = ret.split(";")
@@ -39,21 +40,7 @@
 			}
 		});
 	}
-	function favorsong(type,id,name,artist,artist_id,album,album_id){
-		$.ajax({
-			type : "POST",
-			url : "/add_to_playlist/",
-			data : {type:type,id:id,name:name,artist:artist,artist_id:artist_id,album:album,album_id:album_id},
-			dataType : "text",
-			success : function(ret){
-				if(ret == "True")
-				{
-					console.log("Yes");
-				}
-			}
-		});
-	}
-</script>
+	</script>
 </head>
 <body>
 <div style="padding-top:10px;padding-right: 0px;padding-left: 0px;">
@@ -74,8 +61,8 @@
 
 	{%  if profile.favor_song_netease %}
 	{% for song_list in profile.favor_song_netease %}
-	<img src="{{song_list.coverImgUrl}}" class="img-circle" width="140" height="140">
-	<a target="_blank" href="http://music.163.com/playlist?id={{song_list.id}}">{{song_list.name}}</a>
+	<img onclick="playlist('n','{{song_list.id}}')" src="{{song_list.coverImgUrl}}" class="img-circle" width="140" height="140">
+	<a class="fake" href="/#/netease/playlist/{{song_list.id}}">{{song_list.name}}</a>
 	<p>共 <strong>{{song_list.trackCount}}</strong> 首</p>
 	{% endfor %}
 	{% endif %}
