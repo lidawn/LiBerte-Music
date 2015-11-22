@@ -160,8 +160,10 @@ class XiamiUser:
 	
 	#用header
 	def get_personal_taste(self,xiami_headers):
+		#可提前把location抓出来
 		personal_taste = []
 		resp = requests.get('http://www.xiami.com/song/playlist-default/cat/json',headers=xiami_headers)
+		#print resp.content
 		taste_list = resp.json().get('data').get('trackList')
 		for taste in taste_list:
 			id_ = taste.get('song_id')
@@ -172,6 +174,8 @@ class XiamiUser:
 			album_id = taste.get('album_id')
 			album_name = taste.get('album_name')
 			cover = taste.get('album_pic')
+			mp3Url = XiamiSong.decode_link(taste.get('location'))
+			#print mp3Url
 			result = {
 					'id' : id_,
 					'name' : name,
@@ -180,7 +184,8 @@ class XiamiUser:
 					'artist_id' : artist_id,
 					'album_name' : album_name,
 					'album_id' : album_id,
-					'cover' : cover
+					'cover' : cover,
+					'mp3Url' : mp3Url
 			}
 			personal_taste.append(result)
 		return True,personal_taste
@@ -436,72 +441,63 @@ class XiamiSong:
 		pattern = re.compile(r'<location>(.*)</location>',re.S)
 		result = pattern.findall(xml.content)
 		link_encode =  result[0]
-		if link_encode[0]!='h':
-			link_encode =  link_encode[link_encode.find('h'):]
-		#解密乱码得到真实url
-		length_1 = link_encode.find('t',0)
-		length_2 = link_encode.find('t',length_1+1)
-		length_3 = link_encode.find('t',length_2+1)
-		if (length_2 - length_1) == length_1 or (length_2 - length_1) == (length_1 - 1):
-			length = length_1
-		else:
-			length = length_2 
+		real_url = cls.decode_link(link_encode)
+		if not is_cover:
+			pattern = re.compile(r'<album_pic>(.*)</album_pic>',re.S)
+			result = pattern.findall(xml.content)
+			cover =  result[0]
+			pattern = re.compile(r'<album_name>(.*)</album_name>',re.S)
+			result = pattern.findall(xml.content)
+			album =  result[0]
+			album = album[9:-2].replace(']','')
+			#print album
+			return real_url+';'+cover+';'+album
+		return real_url
+
+	@classmethod
+	def decode_link(cls,link_encode):
+		#print link_encode
+		#第一个数代表行数
+		line = int(link_encode[0])
+		link_encode =  link_encode[1:]
+		length_total = len(link_encode)
 		juzhen = []
-		a = len(link_encode)
-		#矩阵总行数
-		if a%length :
-			line = a/length +1
-			yushu = length - a%length
-		else :
-			line = a/length
-			yushu = 0
+		
+		#短行长度
+		length_1 = length_total/line
+		length_2 = length_1+1
+		for i in range(0,line+1):
+			if length_1*i + length_2*(line-i) == length_total:
+				break
+		line_2 = i
+		line_1 = line - line_2
+		i = line_1
 		start = 0
-		end = length
-		#余数
-		if yushu :
-			#行的长度不一致
-			#较长的行数
-			line_1 = line - yushu
-			i = line_1
-			#处理较长的行数
-			while i>0: 
-				juzhen.append(link_encode[start:end])
-				#a = a-length
-				start = end
-				end += length
-				i -= 1
-			#处理剩余行数
-			line_2 = line - line_1
-			end -=1
-			length -=1
-			i = line_2
-			while i>0 :
-				juzhen.append(link_encode[start:end])
-				start = end
-				end += length
-				i -= 1
-		else:
-			#行的长度一致
-			i = line
-			while i>0: 
-				juzhen.append(link_encode[start:end])
-				#a = a-length
-				start = end
-				end += length
-				i -= 1
+		end = length_2
+		while i>0: 
+			juzhen.append(link_encode[start:end])
+			start = end
+			end += length_2
+			i -= 1
+		end -=1
+		i = line_2
+		while i>0 :
+			juzhen.append(link_encode[start:end])
+			start = end
+			end += length_1
+			i -= 1
 
 		real_url = ''
-		length = len(juzhen[0])
 		i = 0
 		#拼接为正确的url
-		while i<length:
+		while i<length_2:
 			j = 0
 			while j<line:
 				try:
 					#print juzhen[j][i]
 					real_url += juzhen[j][i]
 				except IndexError:
-					i = length
+					i = length_1
 					j = line
 					break
 				j += 1
@@ -521,16 +517,6 @@ class XiamiSong:
 				real_url = real_url[0:index] + '?' + real_url[index+3:]
 			elif real_url[index:index+3] == '%3D' :
 				real_url = real_url[0:index] + '=' + real_url[index+3:]
-		if not is_cover:
-			pattern = re.compile(r'<album_pic>(.*)</album_pic>',re.S)
-			result = pattern.findall(xml.content)
-			cover =  result[0]
-			pattern = re.compile(r'<album_name>(.*)</album_name>',re.S)
-			result = pattern.findall(xml.content)
-			album =  result[0]
-			album = album[9:-2].replace(']','')
-			#print album
-			return real_url+';'+cover+';'+album
 				
 		return real_url
 

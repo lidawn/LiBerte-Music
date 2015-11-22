@@ -66,7 +66,8 @@ def netease_playlist(request,id_):
 		song_list.append(result)
 
 	profile = {
-		'detail' : song_list
+		'detail' : song_list,
+		'detail_str' : json.dumps(song_list)
 	}
 
 	return render(request,'netease_detail.html',{'profile':profile,})

@@ -9,6 +9,55 @@
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
+	function playall(){
+		//var netease_str = document.getElementById("taste_netease").value;
+		var xiami_str = document.getElementById("taste_xiami").value;
+		
+		if(xiami_str!="")
+		{
+			
+			var xiami = JSON.parse( xiami_str );
+			var length = xiami.length ;
+			for (var i = 0; i < length; i++) {
+				
+				song = {
+					title: xiami[i]["name"],
+					artist: xiami[i]["artist_name"],
+					album: xiami[i]["album_name"],
+					cover:xiami[i]["cover"],
+					mp3: xiami[i]["mp3Url"],
+					ogg: ''
+				};
+				window.parent.playlist.push(song);
+				//console.log(playlist);
+				var ul = window.parent.document.getElementById("playlist");
+				//console.log(ul);
+				var li = document.createElement('li');
+				li.textContent = song.artist+' - '+song.title;
+				ul.appendChild(li);
+			};
+		}
+	}
+
+	function playsong1(name,artist,album,cover,mp3Url){
+		//console.log(mp3Url);
+		//console.log(cover);
+		song = {
+			title: name,
+			artist: artist,
+			album: album,
+			cover:cover,
+			mp3: mp3Url,
+			ogg: ''
+		};
+		window.parent.playlist.push(song);
+		//console.log(playlist);
+		var ul = window.parent.document.getElementById("playlist");
+		//console.log(ul);
+		var li = document.createElement('li');
+		li.textContent = song.artist+' - '+song.title;
+		ul.appendChild(li);
+	}
 	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
 		$.ajax({
 			type : "POST",
@@ -74,6 +123,12 @@
 	<br/>
 	<div>
 	{%  if profile.taste_netease or profile.taste_xiami %}
+	{%  if profile.taste_xiami %}
+	
+	<input type="hidden" id="taste_xiami" value="{{profile.taste_xiami_str}}">
+	<a href="javascript:;" style="float:left;" onclick="playall()">播放虾米全部</a>
+	{% endif %}
+	<br/>
 	<table>
 	<tr>
 		<th>歌曲</th>
@@ -85,23 +140,27 @@
 	
 	<tr>
 	<td>
-	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','cover')">{{song.name}}</a>
+	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}','cover')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
-	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
-	<td><a target="_blank" href="http://music.163.com/album?id={{song.album_id}}">{{song.album_name}}</a></td>
+	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name|safe}}</a></td>
+	<td><a target="_blank" href="http://music.163.com/album?id={{song.album_id}}">{{song.album_name|safe}}</a></td>
 	</tr>
 	{% endfor %}
-
+	</table>
+	{% if profile.taste_xiami %}
+	<hr/>
+	{% endif %}
+	<table>
 	{% for song in profile.taste_xiami %}
 	
 	<tr>
 	<td>
-	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','x','{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.artist_id}}','{{song.album_name}}','{{song.album_id}}','{{song.cover}}')">{{song.name}}</a>
+	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong1('{{song.name|safe}}','{{song.artist_name|safe}}','{{song.album_name|safe}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name|safe}}</a>
 	</td>
 	<td>{{song.duration}}</td>
-	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name}}</a></td>
-	<td><a target="_blank" href="http://www.xiami.com/album/{{song.album_id}}">{{song.album_name}}</a></td>
+	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name|safe}}</a></td>
+	<td><a target="_blank" href="http://www.xiami.com/album/{{song.album_id}}">{{song.album_name|safe}}</a></td>
 	</tr>
 	{% endfor %}
 	</table>

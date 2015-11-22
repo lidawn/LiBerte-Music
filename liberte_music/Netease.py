@@ -147,12 +147,12 @@ class NeteaseUser:
 			#print id_,
 			infos  = taste.find_all('td')
 			#print infos
-			name = infos[1].find('a').string.replace('\'','\\\'')
+			name = infos[1].find('a').string
 			duration = infos[2].string
-			artist_name = infos[3].find('a').string.replace('\'',' ')
+			artist_name = infos[3].find('a').string
 			get_id = lambda x : x[x.find('=')+1:]
 			artist_id = get_id(infos[3].find('a').get('href'))
-			album_name = infos[4].find('a').string.replace('\'',' ')
+			album_name = infos[4].find('a').string
 			album_id = get_id(infos[4].find('a').get('href'))
 
 			result = {

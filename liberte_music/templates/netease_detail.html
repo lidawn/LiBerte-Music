@@ -8,6 +8,35 @@
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
+	function playall(){
+		//var netease_str = document.getElementById("taste_netease").value;
+		var detail_str = document.getElementById("detail").value;
+		
+		if(detail_str!="")
+		{
+			
+			var detail = JSON.parse( detail_str );
+			var length = detail.length ;
+			for (var i = 0; i < length; i++) {
+				
+				song = {
+					title: detail[i]["name"],
+					artist: detail[i]["artist_name"],
+					album: detail[i]["album_name"],
+					cover:detail[i]["cover"],
+					mp3: detail[i]["mp3Url"],
+					ogg: ''
+				};
+				window.parent.playlist.push(song);
+				//console.log(playlist);
+				var ul = window.parent.document.getElementById("playlist");
+				//console.log(ul);
+				var li = document.createElement('li');
+				li.textContent = song.artist+' - '+song.title;
+				ul.appendChild(li);
+			};
+		}
+	}
 	function playsong(name,artist,album,cover,mp3Url){
 		console.log(mp3Url);
 		console.log(cover);
@@ -35,6 +64,11 @@
 	<br/>
 	<div>
 	{%  if profile.detail  %}
+	
+	<input type="hidden" id="detail" value="{{profile.detail_str}}">
+	<a href="javascript:;" style="float:left;" onclick="playall()">播放全部</a>
+	<br/>
+	<hr/>
 	<table>
 	<tr>
 		<th>歌曲</th>

@@ -8,31 +8,6 @@ from models import User
 import json
 
 @csrf_exempt
-def get_playlist_links(request):
-	if request.method=="POST":
-		type_ = request.POST.get('type')
-		id_ = request.POST.get('id')
-		
-		#if type_=='n' and is_playable=='True':
-		#	link = NS.get_link(id_,album_id)
-		#elif type_=='x' and is_playable=='True':
-		#	#不一定有封面的
-		#	if cover!='cover':
-		#		#有封面
-		#		link = XS.get_link(id_,True)+';'+cover
-		#	else:
-		#		#无封面
-		#		link = XS.get_link(id_,False)
-
-		#elif type_=='n' and is_playable=='False':
-		#	pass
-		#elif type_=='x' and is_playable=='False':
-		#	pass
-		#else:
-		#	link = '404;404'
-	#return HttpResponse(link)
-
-@csrf_exempt
 def get_link(request):
 	if request.method=="POST":
 		link = '404;404;404'

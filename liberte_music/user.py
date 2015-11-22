@@ -139,8 +139,11 @@ def user_home(request):
 				del dic['__XIAMI_SESSID']
 				xu = XU(xiami_username)
 				ret = xu.get_personal_taste(dic)
+
+				#print ret
 				if ret[0]:
 					profile['taste_xiami'] = ret[1]
+					profile['taste_xiami_str'] = json.dumps(ret[1])
 
 			if bound_netease : 
 				profile['bound_netease'] = True
@@ -155,6 +158,7 @@ def user_home(request):
 				ret = nu.get_personal_taste(cookies)
 				if ret[0]:
 					profile['taste_netease'] = ret[1]
+					profile['taste_netease_str'] = json.dumps(ret[1])
 			
 			return render(request,'home.html',{'profile':profile,})
 			
