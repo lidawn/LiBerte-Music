@@ -1,0 +1,66 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>LiBerte Music</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	function playsong(name,artist,album,cover,mp3Url){
+		console.log(mp3Url);
+		console.log(cover);
+		song = {
+			title: name,
+			artist: artist,
+			album: album,
+			cover:cover,
+			mp3: mp3Url,
+			ogg: ''
+		};
+		window.parent.playlist.push(song);
+		//console.log(playlist);
+		var ul = window.parent.document.getElementById("playlist");
+		//console.log(ul);
+		var li = document.createElement('li');
+		li.textContent = song.artist+' - '+song.title;
+		ul.appendChild(li);
+	}
+	</script>
+</head>
+<body>
+<div style="padding-top:10px;padding-right: 0px;padding-left: 0px;">
+	
+	<br/>
+	<div>
+	{%  if profile.detail  %}
+	<table>
+	<tr>
+		<th>歌曲</th>
+		<th>时长</th>
+		<th>歌手</th>
+		<th>专辑</th>
+	</tr>
+	{% for song in profile.detail %}
+	
+	<tr>
+	<td>
+	<a  href="javascript:;" onclick="playsong('{{song.name}}','{{song.artist_name}}','{{song.album_name}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name}}</a>
+	</td>
+	<td>{{song.duration}}</td>
+	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
+	<td><a target="_blank" href="http://music.163.com/album?id={{song.album_id}}">{{song.album_name}}</a></td>
+	</tr>
+	{% endfor %}
+
+	</table>
+	<br/>
+	
+	{% endif %}
+	</div>
+
+</div>
+<script src="{{STATIC_URL}}js/iframe.js"></script>
+</body>
+</html>

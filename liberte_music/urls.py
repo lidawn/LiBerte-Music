@@ -38,8 +38,8 @@ urlpatterns = patterns('',
 
     url(r'^bound/netease/$','liberte_music.bounder.bound_netease'),
 
-    url(r'^netease/playlist/(?P<id>\d+)/$','liberte_music.detail.netease_playlist'),
-    url(r'^xiami/playlist/(?P<id>\d+)/$','liberte_music.detail.xiami_playlist'),
+    url(r'^netease/playlist/(?P<id_>\d+)/$','liberte_music.detail.netease_playlist'),
+    url(r'^xiami/playlist/(?P<id_>\d+)/$','liberte_music.detail.xiami_playlist'),
    
     #test
    #url(r'^test_put/$','liberte_music.song.test_put'),

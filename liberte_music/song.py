@@ -35,6 +35,7 @@ def get_playlist_links(request):
 @csrf_exempt
 def get_link(request):
 	if request.method=="POST":
+		link = '404;404;404'
 		is_playable = request.POST.get('is_playable')
 		type_ = request.POST.get('type')
 		id_ = request.POST.get('id')
@@ -45,22 +46,33 @@ def get_link(request):
 		album_id = request.POST.get('album_id')
 		cover = request.POST.get('cover')
 		if type_=='n' and is_playable=='True':
-			link = NS.get_link(id_,album_id)
+			link = NS.get_link(id_,album_id,True)
 		elif type_=='x' and is_playable=='True':
 			#不一定有封面的
 			if cover!='cover':
 				#有封面
 				link = XS.get_link(id_,True)+';'+cover
 			else:
-				#无封面
+				#无封面,无专辑
 				link = XS.get_link(id_,False)
 
 		elif type_=='n' and is_playable=='False':
-			pass
+			#解决网易不能播放的问题
+			id_ = XS.parse_id(name,artist,' ')
+			#print ids
+			if id_:
+				#虾米有源
+				link = XS.get_link(id_,False)
+			
 		elif type_=='x' and is_playable=='False':
-			pass
-		else:
-			link = '404;404'
+			#解决虾米不能播放的问题
+			ids = NS.parse_id(name,artist,' ')
+			#print ids
+			if ids:
+				#网易有源
+				link = NS.get_link(str(ids['id']),str(ids['album_id']),False)
+			
+	print link
 	return HttpResponse(link)
 
 @csrf_exempt

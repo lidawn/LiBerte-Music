@@ -192,14 +192,14 @@ class NeteaseUser:
 		#self.get_search_result(1000,keywords)		#歌单
 
 	@classmethod
-	def get_search_result(cls,type,keywords,limit):
+	def get_search_result(cls,type_,keywords,limit):
 		song_list = []
 		URL = 'http://music.163.com/api/search/get/'
 		post_data = {
 						's':keywords,
 						'limit': limit,
 						'sub': 'False',
-						'type': type,
+						'type': type_,
 						'offset': '0'
 		}
 
@@ -286,6 +286,7 @@ class NeteaseUser:
 				song['id'] = playlist.get('id')
 				song['coverImgUrl'] = playlist.get('coverImgUrl')
 				song['trackCount'] = playlist.get('trackCount')
+				#song['trackCount'] = playlist.get('trackCount')
 				song_list.append(song)
 		except:
 			#出错，重新登录授权
@@ -322,12 +323,19 @@ class NeteaseSong:
 		return ids
 
 	@classmethod
-	def get_link(cls,id_,album_id):
+	def get_link(cls,id_,album_id,is_album_name):
 		'''通过专辑id和歌曲id得到播放地址'''
 		URL = 'http://music.163.com/api/album/%s/' % album_id
 		resp = requests.get(URL,cookies=cookies,headers=headers)
+		#print resp.content
 		songs = resp.json().get('album').get('songs')
 		cover = resp.json().get('album').get('blurPicUrl')
+		album = resp.json().get('album').get('name')
+		#print songs,cover,album
 		for song in songs:
 			if str(song.get('id')) == id_:
-				return song.get('mp3Url')+";"+cover
+				#print song
+				if is_album_name:
+					return song.get('mp3Url')+";"+cover
+				else:
+					return song.get('mp3Url')+";"+cover+";"+album

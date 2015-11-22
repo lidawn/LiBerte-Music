@@ -11,7 +11,7 @@
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-	function playlist(type,id){
+	function playall(type,id){
 		$.ajax({
 			type : "POST",
 			url : "/get_playlist_links/",
@@ -61,7 +61,7 @@
 
 	{%  if profile.favor_song_netease %}
 	{% for song_list in profile.favor_song_netease %}
-	<img onclick="playlist('n','{{song_list.id}}')" src="{{song_list.coverImgUrl}}" class="img-circle" width="140" height="140">
+	<img onclick="playall('n','{{song_list.id}}')" src="{{song_list.coverImgUrl}}" class="img-circle" width="140" height="140">
 	<a class="fake" href="/#/netease/playlist/{{song_list.id}}">{{song_list.name}}</a>
 	<p>共 <strong>{{song_list.trackCount}}</strong> 首</p>
 	{% endfor %}

@@ -205,12 +205,12 @@ class XiamiUser:
 		length = len(song_name_list)
 		for i in range(length):
 			song_name = song_name_list[i].find('a').string.encode('utf-8')
-			print song_name
+			#print song_name
 			artist_name = song_name_list[i].find('a',class_='artist_name').string.encode('utf-8')
 			song_id = song_name_list[i].find('a').get('href')
 			song_id = song_id[song_id.rfind('/')+1:]
 			artist_id = song_name_list[i].find('a',class_='artist_name').get('href')
-			artist_id = song_id[song_id.rfind('/')+1:]
+			artist_id = artist_id[artist_id.rfind('/')+1:]
 			#print song_act_list[i].find('a').get('onclick').find('play')
 			if song_act_list[i].find('a').get('onclick').find('play') == 0:
 				song_is_playable = True
@@ -265,25 +265,25 @@ class XiamiUser:
 
 	@classmethod
 	def search(cls,keywords):
-		return cls.get_search_result('song',keywords)			#单曲
+		return cls.get_search_result('song',keywords,50)			#单曲
 		#self.get_search_result('album',keywords)			#专辑
 		#self.get_search_result('artist',keywords)		#歌手
 		#self.get_search_result('collect',keywords)		#歌单/精选集
 
 	@classmethod
-	def get_search_result(cls,type,keywords):
+	def get_search_result(cls,type_,keywords,limit):
 		#两个平台 用歌曲名，歌手，(专辑名)标识同一首歌
 		#返回一个字典列表，不创建对象
 		#要改成抓取所有歌曲，分页返回
 		search_results = []
 
 		URL = 'http://www.xiami.com/search/%s/page/%d?key=%s' 
-		resp = requests.get(URL % (type,1,keywords),headers=headers)
+		resp = requests.get(URL % (type_,1,keywords),headers=headers)
 		content = BS(resp.content)
 		results = content.find('div',class_='search_result_box')
-		#搜索结果多少条,最多显示50条
+		#搜索结果多少条,最多显示limit条
 		count = results.find('b').string
-		count = (lambda x : x if x<50 else 50)(int(count))
+		count = (lambda x : x if x<limit else limit)(int(count))
 		page_total = (lambda x : (x/20 + 1) if x % 20 else (x/20))(count)
 		#print page_total
 		for p in range(page_total):
@@ -420,6 +420,15 @@ class XiamiSong:
 		self._is_playable = is_playable #是否可播放
 
 	@classmethod
+	def parse_id(cls,name,artist,album):
+		keywords = name+' '+ artist+' '+album
+		song_list = XiamiUser.get_search_result('song',keywords,1)
+		if song_list is None:
+			return None
+		id_ = song_list[0]['song_id']
+		return id_
+
+	@classmethod
 	def get_link(cls,id_,is_cover):
 	 	url = 'http://www.xiami.com/song/playlist/id/'+id_
 		xml = requests.get(url,headers=headers)
@@ -516,7 +525,12 @@ class XiamiSong:
 			pattern = re.compile(r'<album_pic>(.*)</album_pic>',re.S)
 			result = pattern.findall(xml.content)
 			cover =  result[0]
-			return real_url+';'+cover
+			pattern = re.compile(r'<album_name>(.*)</album_name>',re.S)
+			result = pattern.findall(xml.content)
+			album =  result[0]
+			album = album[9:-2].replace(']','')
+			#print album
+			return real_url+';'+cover+';'+album
 				
 		return real_url
 
