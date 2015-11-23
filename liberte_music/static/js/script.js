@@ -3,16 +3,7 @@ var repeat = localStorage.repeat || 0,
 	shuffle = localStorage.shuffle || 'false',
 	continous = true,
 	autoplay = true,
-	//playlist = [
-	//	{
-	//		title: '我怀念的',
-	//		artist: '孙燕姿',
-	//		album: '逆光',
-	//		cover:'http://p4.music.126.net/PehnaQ-BaAXeQg1d5s7leA==/6635552673699715.jpg',
-	//		mp3: 'http://m2.music.126.net/BsOGGfOS7CueDaj6_mJYtA==/6620159510912123.mp3',
-	//		ogg: ''
-	//	},
-	//];
+	//用mp3去重
 	playlist = [
 		{
 			title: ' ',

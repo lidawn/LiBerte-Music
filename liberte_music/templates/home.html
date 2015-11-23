@@ -88,6 +88,7 @@
 		});
 	}
 	function favorsong(type,id,name,artist,artist_id,album,album_id){
+		var button = window.event.target;
 		$.ajax({
 			type : "POST",
 			url : "/add_to_playlist/",
@@ -96,7 +97,8 @@
 			success : function(ret){
 				if(ret == "True")
 				{
-					console.log("Yes");
+					button;
+					
 				}
 			}
 		});
@@ -129,8 +131,9 @@
 	<a href="javascript:;" style="float:left;" onclick="playall()">播放虾米全部</a>
 	{% endif %}
 	<br/>
-	<table>
+	<table class="table">
 	<tr>
+		<th>#</th>
 		<th>歌曲</th>
 		<th>时长</th>
 		<th>歌手</th>
@@ -138,9 +141,14 @@
 	</tr>
 	{% for song in profile.taste_netease %}
 	
-	<tr>
+	<tr >
 	<td>
-	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.artist_id}}','{{song.album_name|escapejs}}','{{song.album_id}}','cover')">{{song.name}}</a>
+	
+	<button type="button" class="btn btn-default btn-sm" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">
+  		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏
+	</button>
+	</td><td>
+	<a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.artist_id}}','{{song.album_name|escapejs}}','{{song.album_id}}','cover')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name|safe}}</a></td>
@@ -151,12 +159,17 @@
 	{% if profile.taste_xiami %}
 	<hr/>
 	{% endif %}
-	<table>
+	<table class="table">
+	<h4>虾米</h4>
 	{% for song in profile.taste_xiami %}
 	
 	<tr>
 	<td>
-	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong1('{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name|safe}}</a>
+	<button type="button" class="btn btn-default btn-sm" onclick="favorsong('x','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">
+  		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏
+	</button>
+	</td><td>
+	<a  href="javascript:;" onclick="playsong1('{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name|safe}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name|safe}}</a></td>
