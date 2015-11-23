@@ -67,6 +67,8 @@ def add_to_playlist(request):
 		type = request.POST.get('type')
 		id_ = request.POST.get('id')
 
+		print name , artist , artist_id , album,album_id,type,id_
+
 		if type=='n':
 			playlist_id = user.netease_playlist
 			netease_cookies = user.netease_cookies

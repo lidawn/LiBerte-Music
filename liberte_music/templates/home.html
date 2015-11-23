@@ -140,7 +140,7 @@
 	
 	<tr>
 	<td>
-	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}','cover')">{{song.name}}</a>
+	<a href="javascript:;" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.artist_id}}','{{song.album_name|escapejs}}','{{song.album_id}}','cover')">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name|safe}}</a></td>
@@ -156,7 +156,7 @@
 	
 	<tr>
 	<td>
-	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong1('{{song.name|safe}}','{{song.artist_name|safe}}','{{song.album_name|safe}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name|safe}}</a>
+	<a href="javascript:;" onclick="favorsong('x','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">收藏</a><a  href="javascript:;" onclick="playsong1('{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name|safe}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name|safe}}</a></td>

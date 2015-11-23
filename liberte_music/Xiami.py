@@ -270,7 +270,7 @@ class XiamiUser:
 
 	@classmethod
 	def search(cls,keywords):
-		return cls.get_search_result('song',keywords,50)			#单曲
+		return cls.get_search_result('song',keywords,40)			#单曲
 		#self.get_search_result('album',keywords)			#专辑
 		#self.get_search_result('artist',keywords)		#歌手
 		#self.get_search_result('collect',keywords)		#歌单/精选集
@@ -283,53 +283,55 @@ class XiamiUser:
 		search_results = []
 
 		URL = 'http://www.xiami.com/search/%s/page/%d?key=%s' 
+		#print keywords
 		resp = requests.get(URL % (type_,1,keywords),headers=headers)
 		content = BS(resp.content)
 		results = content.find('div',class_='search_result_box')
+		#print results
 		#搜索结果多少条,最多显示limit条
 		count = results.find('b').string
 		count = (lambda x : x if x<limit else limit)(int(count))
 		page_total = (lambda x : (x/20 + 1) if x % 20 else (x/20))(count)
 		#print page_total
 		for p in range(page_total):
-			for result in results.find_all('tbody'):
-				for tr in result.find_all('tr'):
-					#每一个tr代表一首歌
-					song = {}
-					song_is_playable = (lambda x : True if x is not None else False)(tr.find('td',class_='chkbox').find('input').get('checked'))
-					song_name = tr.find('td',class_='song_name').find('a',target='_blank').find('b')
-					if song_name:
-						song_name = song_name.string
-					else:
-						song_name = tr.find('td',class_='song_name').find('a',target='_blank').string
-
-					song_album = tr.find('td',class_='song_album').find('a',target='_blank').find('b')
-					if song_album:
-						song_album = song_album.string
-					else:
-						song_album = tr.find('td',class_='song_album').find('a',target='_blank').string
+			#print results
+			#print "aaaa"
+			result  = results.find('tbody')
+			#print result
+			for tr in result.find_all('tr'):
+				#每一个tr代表一首歌
+				song = {}
+				song_is_playable = (lambda x : True if x is not None else False)(tr.find('td',class_='chkbox').find('input').get('checked'))
+				song_name = tr.find('td',class_='song_name').find('a',target='_blank').find('b')
+				if song_name:
+					song_name = song_name.string
+				else:
+					song_name = tr.find('td',class_='song_name').find('a',target='_blank').string
+				song_album = tr.find('td',class_='song_album').find('a',target='_blank').find('b')
+				if song_album:
+					song_album = song_album.string
+				else:
+					song_album = tr.find('td',class_='song_album').find('a',target='_blank').string
+				song_artist = tr.find('td',class_='song_artist').find('a',target='_blank').string
+				if song_artist:
+					song_artist = song_artist.string
+				else:
 					song_artist = tr.find('td',class_='song_artist').find('a',target='_blank').string
-					if song_artist:
-						song_artist = song_artist.string
-					else:
-						song_artist = tr.find('td',class_='song_artist').find('a',target='_blank').string
-					if song_is_playable:
-						song_id = tr.find('td',class_='song_name').find('a',target='_blank').get('href')
-						song_id = song_id[song_id.rfind('/')+1:]
-					else:
-						#check(xiami)
-						song_id = '-1'
-					song = {
-					'song_id':song_id,
-					'song_is_playable':song_is_playable,
-					'song_name' : song_name,
-					'song_album' : song_album,
-					'song_artist' : song_artist
-					}
-					search_results.append(song)
+				
+				song_id = tr.find('td',class_='song_name').find('a',target='_blank').get('href')
+				song_id = song_id[song_id.rfind('/')+1:]
+				
+				song = {
+				'song_id':song_id,
+				'song_is_playable':song_is_playable,
+				'song_name' : song_name,
+				'song_album' : song_album,
+				'song_artist' : song_artist
+				}
+				search_results.append(song)
 			if p == page_total:
 				break
-			resp = requests.get(URL%(type,p+2,keywords),headers=headers)
+			resp = requests.get(URL%(type_,p+2,keywords),headers=headers)
 			content = BS(resp.content)
 			results = content.find('div',class_='search_result_box')
 
