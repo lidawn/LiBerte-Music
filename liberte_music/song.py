@@ -96,7 +96,8 @@ def add_to_playlist(request):
 			for i in li:
 				i_li = i.split('=')
 				xiami_cookie[i_li[0]] = i_li[1]
-			XU.set_favor_song(id_,token,xiami_cookie)
+			if XU.set_favor_song(id_,token,xiami_cookie):
+				ret = 'True'
 			#link = XU.get_link(id_)+';'+cover
 		else:
 			ret = 'False'

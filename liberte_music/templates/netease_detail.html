@@ -66,7 +66,10 @@
 	{%  if profile.detail  %}
 	
 	<input type="hidden" id="detail" value="{{profile.detail_str}}">
-	<a href="javascript:;" style="float:left;" onclick="playall()">播放全部</a>
+	<button type="button" class="btn btn-danger btn-sm" style="float:left;" onclick="playall()">
+  		播放全部
+	</button>
+	
 	<br/>
 	<hr/>
 	<table>

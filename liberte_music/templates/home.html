@@ -88,7 +88,15 @@
 		});
 	}
 	function favorsong(type,id,name,artist,artist_id,album,album_id){
-		var button = window.event.target;
+		
+		if(window.event.target.nodeName == "SPAN")
+		{
+			var button = window.event.target.parentNode;
+		}
+		else
+		{
+			var button = window.event.target;
+		}
 		$.ajax({
 			type : "POST",
 			url : "/add_to_playlist/",
@@ -97,8 +105,8 @@
 			success : function(ret){
 				if(ret == "True")
 				{
-					button;
-					
+					button.className = "btn btn-danger btn-sm";
+					button.childNodes[1].className = "glyphicon glyphicon-star";
 				}
 			}
 		});
@@ -128,7 +136,10 @@
 	{%  if profile.taste_xiami %}
 	
 	<input type="hidden" id="taste_xiami" value="{{profile.taste_xiami_str}}">
-	<a href="javascript:;" style="float:left;" onclick="playall()">播放虾米全部</a>
+	<button type="button" class="btn btn-warning btn-sm" style="float:left;" onclick="playall()">
+  		播放虾米全部
+	</button>
+	<br/>
 	{% endif %}
 	<br/>
 	<table class="table">
@@ -143,7 +154,6 @@
 	
 	<tr >
 	<td>
-	
 	<button type="button" class="btn btn-default btn-sm" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">
   		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏
 	</button>

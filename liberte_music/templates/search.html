@@ -4,6 +4,7 @@
 	<title>搜索</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
@@ -37,6 +38,14 @@
 		});
 	}
 	function favorsong(type,id,name,artist,artist_id,album,album_id){
+		if(window.event.target.nodeName == "SPAN")
+		{
+			var button = window.event.target.parentNode;
+		}
+		else
+		{
+			var button = window.event.target;
+		}
 		$.ajax({
 			type : "POST",
 			url : "/add_to_playlist/",
@@ -45,7 +54,8 @@
 			success : function(ret){
 				if(ret == "True")
 				{
-					console.log("Yes");
+					button.className = "btn btn-danger btn-sm";
+					button.childNodes[1].className = "glyphicon glyphicon-star";
 				}
 			}
 		});
@@ -61,7 +71,7 @@
 	  </div>
 	</form>
 	{% if results %}
-	<table class="table table-hover">
+	<table class="table">
 	<tr>
 		<th >歌曲</th>
 		<th >艺人</th>
@@ -70,7 +80,12 @@
 	</tr>
 	{% for result in results %}
 	<tr>
-		<td><a href="javascript:;" onclick="favorsong('x','{{result.song_id}}','{{result.song_name|safe}}','{{result.song_artist|safe}}','-1','{{result.song_album|safe}}','-1')">收藏</a><a href="javascript:;" onclick="play('{{result.song_is_playable}}','x',{{result.song_id}},'{{result.song_name|safe}}','{{result.song_artist|safe}}','{{result.song_album|safe}}','cover')">{{result.song_name|safe}}</a></td>
+		<td>
+		<button type="button" class="btn btn-default btn-sm" onclick="favorsong('x','{{result.song_id}}','{{result.song_name|safe}}','{{result.song_artist|safe}}','-1','{{result.song_album|safe}}','-1')">
+  			<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏
+		</button>
+		</td><td>
+		<a href="javascript:;" onclick="play('{{result.song_is_playable}}','x',{{result.song_id}},'{{result.song_name|safe}}','{{result.song_artist|safe}}','{{result.song_album|safe}}','cover')">{{result.song_name|safe}}</a></td>
 		<td>{{result.song_artist|safe}}</td>
 		<td>{{result.song_album|safe}}</td>
 		{% if result.song_is_playable %}
