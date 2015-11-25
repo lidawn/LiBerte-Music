@@ -25,9 +25,12 @@ window.onhashchange = function(){
 };
 
 window.onresize = function(){
+	console.log("resize");
 	var _iframe = document.getElementById("l_iframe");
 	
-	_iframe.height = document.body.scrollHeight;
+	_iframe.height = document.body.clientHeight;
+	console.log(_iframe.height);
+
 	_iframe.scrolling = "auto";
 };
 

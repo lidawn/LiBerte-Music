@@ -145,7 +145,8 @@
 	<br/>
 	<table class="table">
 	<tr>
-		<th>#</th>
+		<th>#Star</th>
+		<th>#Play</th>
 		<th>歌曲</th>
 		<th>时长</th>
 		<th>歌手</th>
@@ -156,10 +157,15 @@
 	<tr >
 	<td>
 	<button type="button" class="btn btn-default btn-sm" onclick="favorsong('n','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">
-  		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏
+  		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 	</button>
 	</td><td>
-	<a  href="javascript:;" onclick="playsong('True','n','{{song.id}}','{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.artist_id}}','{{song.album_name|escapejs}}','{{song.album_id}}','cover')">{{song.name}}</a>
+	<button type="button" class="btn btn-default btn-sm" onclick="playsong('True','n','{{song.id}}','{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.artist_id}}','{{song.album_name|escapejs}}','{{song.album_id}}','cover')" aria-hidden="true"></span>
+		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+	</button>
+	</td>
+	<td>
+	<a  target="_blank" href="http://music.163.com/song?id={{song.id}}">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name|safe}}</a></td>
@@ -179,10 +185,14 @@
 	<tr>
 	<td>
 	<button type="button" class="btn btn-default btn-sm" onclick="favorsong('x','{{song.id}}','{{song.name|safe}}','{{song.artist_name|safe}}','{{song.artist_id}}','{{song.album_name|safe}}','{{song.album_id}}')">
-  		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏
+  		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 	</button>
 	</td><td>
-	<a  href="javascript:;" onclick="playsong1('{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name|safe}}</a>
+	<button type="button" class="btn btn-default btn-sm" onclick="playsong1('{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">
+  		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+	</button>
+	</td><td>
+	<a  href="http://www.xiami.com/song/{{song.id}}" target="_blank">{{song.name|safe}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name|safe}}</a></td>
