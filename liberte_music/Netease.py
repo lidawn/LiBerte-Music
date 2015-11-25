@@ -149,9 +149,13 @@ class NeteaseUser:
 			#print infos
 			name = infos[1].find('a').string
 			duration = infos[2].string
-			artist_name = infos[3].find('a').string
 			get_id = lambda x : x[x.find('=')+1:]
-			artist_id = get_id(infos[3].find('a').get('href'))
+			if infos[3].find('a'):
+				artist_name = infos[3].find('a').string
+				artist_id = get_id(infos[3].find('a').get('href'))
+			else:
+				artist_name = infos[3].find('span').string
+				artist_id = '-1'
 			album_name = infos[4].find('a').string
 			album_id = get_id(infos[4].find('a').get('href'))
 
