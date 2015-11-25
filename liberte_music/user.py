@@ -245,4 +245,5 @@ def user_home_xiami(request,page='1'):
 	return HttpResponseRedirect('/login/')
 
 def main(request):
+	print 'main'
 	return render(request,'main.html')
