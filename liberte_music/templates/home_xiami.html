@@ -70,7 +70,11 @@
 	
 	<tr>
 	<td>
-	<a  href="javascript:;" onclick="playsong('{{song.song_is_playable}}','x','{{song.song_id}}','{{song.song_name}}','{{song.artist_name}}','{{song.artist_id}}','test','test','cover')">{{song.song_name}}</a>
+	<button type="button" class="btn btn-default btn-sm" onclick="playsong('{{song.song_is_playable}}','x','{{song.song_id}}','{{song.song_name}}','{{song.artist_name}}','{{song.artist_id}}','test','test','cover')">
+  		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+	</button>
+	</td><td>
+	<a  href="http://www.xiami.com/song/{{song.song_id}}/" target="_blank">{{song.song_name}}</a>
 	</td>
 	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}/">{{song.artist_name}}</a></td>
 	</tr>
