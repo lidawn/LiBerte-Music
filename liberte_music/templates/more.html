@@ -9,29 +9,9 @@
 	<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 </head>
 <body>
+	{% include 'nav.html' %} 
+
 <div class="container" style="padding-top:10px;">
-	<script type="text/javascript">
-		function add_song(id){
-	
-			
-						
-							song = {
-								title: '德国第一装甲师进行曲',
-								artist: '德国',
-								album: '德国第一装甲师进行曲.mp3',
-								cover:'',
-								mp3: 'http://m2.music.126.net/BsOGGfOS7CueDaj6_mJYtA==/6620159510912123.mp3',
-								ogg: ''
-								};
-								playlist.push(song);
-								//switchTrack(playlist.lenth-1);
-								console.log(playlist);
-							
-								$('#playlist').append('<li>'+song.artist+' - '+song.title+'</li>');
-							
-		}
-        
-    </script>
 
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if results.result_netease.hot_recommend %}
@@ -124,5 +104,6 @@
 	{% endif %}
 	
 </div>
+<script src="{{STATIC_URL}}js/iframe.js"></script>
 </body>
 </html>
