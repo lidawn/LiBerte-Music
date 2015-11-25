@@ -38,7 +38,7 @@ def bound_xiami_taobao(request):
 		xu = XU(taobao_id)
 
 		message = xu.login_with_taobao(passwd,captcha)
-		#print message
+		print message
 		if message['status']:
 			username = request.session.get('username')
 			user = User.objects.get(username=username)

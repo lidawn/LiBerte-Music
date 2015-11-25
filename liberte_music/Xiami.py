@@ -82,7 +82,11 @@ class XiamiUser:
 			'appName': 'xiami',
 			'appEntrance': 'taobao',
 		}
-
+		message = {
+					'status' : False,
+					'titleMsg' : '发生错误',
+					'captcha_url' : None
+		}
 		ret = self._session.post(check_url,data=check_data,headers=headers)
 		rsa_n = int(self.bs.find('input', {"id": "fm-modulus"}).get('value'), base=16)
 		rsa_e = 65537
@@ -106,15 +110,11 @@ class XiamiUser:
 
 		ret = self._session.post('https://passport.alipay.com/newlogin/login.do?fromSite=0',headers=headers,data=data)
 		if ret.text == '':
-			message = {
-					'status' : True,
-					'titleMsg' : '发生错误',
-					'captcha_url' : None
-			}
+			
 			return message
 		ret = ret.json()
 		# 验证码
-		#print ret['content']
+		print ret['content']
 		if ret['content']['status'] == -1:
 			if ret['content'].get('data', {}).get('checkCodeLink'):
 				message = {
@@ -152,7 +152,7 @@ class XiamiUser:
 				}
 			else:
 				message = {
-					'status' : True,
+					'status' : False,
 					'titleMsg' : '发生错误',
 					'captcha_url' : None
 				}

@@ -115,7 +115,7 @@
 </head>
 <body>
 {% include 'nav.html' %} 
-<div style="padding-top:10px;padding-right: 0px;padding-left: 0px;">
+<div class="container">
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if profile%}
 	{% if not profile.status %}
@@ -168,10 +168,12 @@
 	{% endfor %}
 	</table>
 	{% if profile.taste_xiami %}
+	<h4>虾米</h4>
 	<hr/>
 	{% endif %}
 	<table class="table">
-	<h4>虾米</h4>
+
+	
 	{% for song in profile.taste_xiami %}
 	
 	<tr>
@@ -192,13 +194,15 @@
 	{% else %}
 	<h3>请绑定<a class="fake" href="/#/bound/netease/">网易云音乐</a>或者
 	<a class="fake" href="/#/bound/xiami/">虾米</a>
-	<a class="fake" style="color: red;" href="/#/bound/xiami/taobao/">(淘宝)</a>
+	<a class="fake" style="color: red;" href="javascript:;">(淘宝..坏掉了)</a>
 	音乐
 	</h3>
 	{% endif %}
 	</div>
 
 	{% endif %}
+
+<div style="height: 150;"></div>
 
 </div>
 <script src="{{STATIC_URL}}js/iframe.js"></script>

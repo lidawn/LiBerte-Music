@@ -10,11 +10,11 @@
 	<script src="{{STATIC_URL}}js/main.js"></script>
 	
 </head>
-<body>
+<body style="overflow:hidden;">
 
-<div style="padding-top:10px;padding-right: 0px;padding-left: 0px;float: left;width: 40%;">
-	{% include 'player.html' %} 
-</div>
+<div style="position: fixed;bottom:0;z-index:999;clear:both;width:100%;">
+{% include 'player.html' %} 
 <iframe  id="l_iframe"src="about:blank"></iframe>
+</div>
 </body>
 </html>

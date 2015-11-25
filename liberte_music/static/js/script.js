@@ -6,9 +6,9 @@ var repeat = localStorage.repeat || 0,
 	//用mp3去重
 	playlist = [
 		{
-			title: ' ',
-			artist: ' ',
-			album: ' ',
+			title: '-',
+			artist: '-',
+			album: '-',
 			cover:'http://img4.duitang.com/uploads/item/201403/30/20140330092939_PtBSc.thumb.600_0.jpeg',
 			mp3: ' ',
 			ogg: ' '

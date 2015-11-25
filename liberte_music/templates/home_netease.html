@@ -14,7 +14,7 @@
 <body>
 	{% include 'nav.html' %} 
 
-<div style="padding-top:10px;padding-right: 0px;padding-left: 0px;">
+<div class="container">
 	<!-- a 的href 自己抓  不用原生的-->
 	{% if profile%}
 	{% if not profile.status %}
@@ -39,7 +39,8 @@
 	{% endif %}
 	
 	{% endif %}
-
+	<br/>
+<div style="height: 150;"></div>
 </div>
 <script src="{{STATIC_URL}}js/iframe.js"></script>
 </body>

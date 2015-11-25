@@ -65,7 +65,7 @@
 <body>
 	{% include 'nav.html' %} 
 
-<div class="container" style="padding-top:10px;">
+<div class="container">
 	<form class="form-horizontal" method="get" action="">
 	  <div class="form-group">
 	  	<input type="text" class="form-control" name='keywords' placeholder="输入关键字">
@@ -99,6 +99,8 @@
 	{% endfor %}
 	</table>
 	{% endif %}
+	<br/>
+<div style="height: 150;"></div>
 </div>
 <script src="{{STATIC_URL}}js/iframe.js"></script>
 </body>
