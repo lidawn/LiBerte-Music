@@ -255,5 +255,10 @@ var repeat = localStorage.repeat || 0,
 			//console.log($('#playlist-ul').html());
 			localStorage.setItem("playlist",JSON.stringify(playlist));
 			localStorage.setItem("playlist_ul",$('#playlist-ul').html());
+			$("#playlist").delegate("li", "click", function(evt) {
+				var _i = $("#playlist li").index($(evt.target));
+				//console.log("i is :", _i);
+				switchTrack(_i);
+			});
 		}
 	}

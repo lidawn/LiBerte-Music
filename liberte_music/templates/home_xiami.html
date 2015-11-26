@@ -9,47 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-	<script type="text/javascript">
-	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
-		var title_url= "http://www.xiami.com/song/"+id;
-		$.ajax({
-			type : "POST",
-			url : "/get_link/",
-			data : {is_playable:is_playable,type:type,id:id,name:name,artist:artist,artist_id:artist_id,album:album,album_id:album_id,cover:cover},
-			dataType : "text",
-			success : function(ret){
-				rarray = ret.split(";")
-				if(rarray[0] != "404")
-				{
-					song = {
-						title: name,
-						title_url:title_url,
-						artist: artist,
-						album: rarray[2],
-						cover:rarray[1],
-						mp3: rarray[0],
-						ogg: ''
-					};
-					var ul = window.parent.document.getElementById("playlist");
-					if(window.parent.playlist[0]["title"] == "-")
-					{
-						window.parent.playlist.shift();
-						var li = ul.childNodes[0];
-						ul.removeChild(li);
-					}
-					var length_playlist = window.parent.playlist.length;
-					window.parent.playlist.push(song);
-					localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
-					var li = document.createElement('li');
-					li.textContent = song.artist+' - '+song.title;
-					ul.appendChild(li);
-					localStorage.setItem("playlist_ul",ul.parentNode.innerHTML);
-					window.parent.switchTrack(length_playlist);
-				}
-			}
-		});
-	}
-	</script>
+	<script src="{{STATIC_URL}}js/playandfavorfuncs.js"></script>
 </head>
 <body>
 	{% include 'nav.html' %} 

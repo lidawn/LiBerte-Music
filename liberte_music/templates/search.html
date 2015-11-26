@@ -7,71 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
 	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-	<script type="text/javascript">
-	function play(is_playable,type,id,name,artist,album,cover){
-		$.ajax({
-			type : "POST",
-			url : "/get_link/",
-			data : {is_playable:is_playable,type:type,id:id,name:name,artist:artist,album:album,cover:cover},
-			dataType : "text",
-			success : function(ret){
-				var title_url= "http://www.xiami.com/song/"+id;
-				rarray = ret.split(";")
-				if(rarray[0] != "404")
-				{
-					song = {
-						title: name,
-						title_url:title_url,
-						artist: artist,
-						album: album,
-						cover:rarray[1],
-						mp3: rarray[0],
-						ogg: ''
-					};
-					
-					var ul = window.parent.document.getElementById("playlist");
-					if(window.parent.playlist[0]["title"] == "-")
-					{
-						window.parent.playlist.shift();
-						var li = ul.childNodes[0];
-						ul.removeChild(li);
-					}
-					var length_playlist = window.parent.playlist.length;
-					window.parent.playlist.push(song);
-					localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
-					var li = document.createElement('li');
-					li.textContent = song.artist+' - '+song.title;
-					ul.appendChild(li);
-					localStorage.setItem("playlist_ul",ul.parentNode.innerHTML);
-					window.parent.switchTrack(length_playlist);
-				}
-			}
-		});
-	}
-	function favorsong(type,id,name,artist,artist_id,album,album_id){
-		if(window.event.target.nodeName == "SPAN")
-		{
-			var button = window.event.target.parentNode;
-		}
-		else
-		{
-			var button = window.event.target;
-		}
-		$.ajax({
-			type : "POST",
-			url : "/add_to_playlist/",
-			data : {type:type,id:id,name:name,artist:artist,artist_id:artist_id,album:album,album_id:album_id},
-			dataType : "text",
-			success : function(ret){
-				if(ret == "True")
-				{
-					button.className = "btn btn-danger btn-sm";
-					button.childNodes[1].className = "glyphicon glyphicon-star";
-				}
-			}
-		});
-	}
-	</script>
+	<script src="{{STATIC_URL}}js/playandfavorfuncs.js"></script>
 </head>
 <body>
 	{% include 'nav.html' %} 
@@ -99,7 +35,7 @@
   			<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 		</button>
 		</td><td>
-		<button type="button" class="btn btn-default btn-sm" onclick="play('{{result.song_is_playable}}','x',{{result.song_id}},'{{result.song_name|safe}}','{{result.song_artist|safe}}','{{result.song_album|safe}}','cover')">
+		<button type="button" class="btn btn-default btn-sm" onclick="playsong('{{result.song_is_playable}}','x',{{result.song_id}},'{{result.song_name|safe}}','{{result.song_artist|safe}}','{{result.song_album|safe}}','cover')">
   		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
 		</button>
 		</td><td>
