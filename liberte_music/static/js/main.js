@@ -48,7 +48,6 @@ $(document).ready(function(){
 	{
 		document.getElementById("playlist-ul").innerHTML = playlist_ul_str;
 	}
-	
 
 	$("#playlist").delegate("li", "click", function(evt) {
 		var _i = $("#playlist li").index($(evt.target));

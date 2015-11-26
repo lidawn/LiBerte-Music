@@ -11,7 +11,8 @@
 }
 
 #playlist-title { overflow:hidden;background: rgba(0, 0, 0, 0.8); float: right; right:0;width: 50%; height: 30px; margin: 0 auto 0 auto; padding: 10px 15px; list-style: none; position: fixed;}
-#playlist-title a:hover { text-decoration: none;  }
+#playlist-title strong {color: #337ab7;  }
+#playlist-title strong:hover { cursor: pointer; }
 * { margin: 0; padding: 0; }
 body { font: 14px "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; background: #fff; color: #CC7F13; }
 

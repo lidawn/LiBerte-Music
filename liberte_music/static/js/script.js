@@ -229,3 +229,31 @@ var repeat = localStorage.repeat || 0,
 			$(this).addClass('enable');
 		}
 	});
+	
+	function clear_playlist()
+	{
+		if(playlist[0]['title'] !='-')
+		{
+			$('#playlist').remove();
+			$('#playlist-ul').prepend("<ul id=\"playlist\"></ul>");
+			playlist = [
+				{
+					title: '-',
+					title_url: 'javascript:;',
+					artist: '-',
+					album: '-',
+					cover:'http://img4.duitang.com/uploads/item/201403/30/20140330092939_PtBSc.thumb.600_0.jpeg',
+					mp3: ' ',
+					ogg: ' '
+				},
+			];
+			for (var i=0; i<playlist.length; i++){
+				var item = playlist[i];
+				$('#playlist').append('<li>'+item.artist+' - '+item.title+'</li>');
+			}
+			//console.log(JSON.stringify(playlist));
+			//console.log($('#playlist-ul').html());
+			localStorage.setItem("playlist",JSON.stringify(playlist));
+			localStorage.setItem("playlist_ul",$('#playlist-ul').html());
+		}
+	}
