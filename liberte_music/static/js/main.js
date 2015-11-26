@@ -42,6 +42,12 @@ $(document).ready(function(){
 	window.playlist = playlist;
 	document.getElementById("playlist-ul").innerHTML = playlist_ul_str;
 
+	$("#playlist").delegate("li", "click", function(evt) {
+		var _i = $("#playlist li").index($(evt.target));
+		//console.log("i is :", _i);
+		switchTrack(_i);
+	});
+
 	//setup iframe
 	var _url = window.location.href;
 	//console.log(document);
