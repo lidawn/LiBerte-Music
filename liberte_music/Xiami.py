@@ -168,7 +168,8 @@ class XiamiUser:
 		for taste in taste_list:
 			id_ = taste.get('song_id')
 			name = taste.get('title')
-			duration = str(taste.get('length')/60) + ':' + str(taste.get('length')%60)
+			prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
+			duration = prepend_zero(str(taste.get('length')/60)) + ':' + prepend_zero(str(taste.get('length')%60))
 			artist_id = taste.get('artist_id')
 			artist_name = taste.get('artist')
 			album_id = taste.get('album_id')

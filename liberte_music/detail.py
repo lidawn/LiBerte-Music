@@ -43,7 +43,8 @@ def netease_playlist(request,id_):
 	for song in playlist:
 		name = song.get('name')
 		duration = song.get('duration')/1000
-		duration = str(duration/60) + ':' + str(duration%60)
+		prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
+		duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
 		id_ = song.get('id')
 		artist_name = song.get('artists')[0].get('name')
 		artist_id = song.get('artists')[0].get('id')

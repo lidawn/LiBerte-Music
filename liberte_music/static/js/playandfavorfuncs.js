@@ -1,3 +1,17 @@
+//a是否在b中
+function is_exist(a,b)
+{
+	var length = b.length;
+	for (var i=0;i<length;i++)
+	{
+		if(a==b[i]["mp3"])
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
 //虾米推荐全部播放
 function playall_xiami_taste(){
 	var xiami_str = document.getElementById("taste_xiami").value;
@@ -14,6 +28,7 @@ function playall_xiami_taste(){
 		}
 		var length_playlist = window.parent.playlist.length;
 		for (var i = 0; i < length; i++) {
+
 			song = {
 				title: xiami[i]["name"],
 				title_url:"http://www.xiami.com/song/"+xiami[i]["id"],
@@ -23,7 +38,7 @@ function playall_xiami_taste(){
 				mp3: xiami[i]["mp3Url"],
 				ogg: ''
 			};
-				
+			if(is_exist(song["mp3"],window.parent.playlist)!=-1)continue;
 			window.parent.playlist.push(song);
 			localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
 			var li = document.createElement('li');
@@ -46,6 +61,8 @@ function playsong_xiami_taste(id,name,artist,album,cover,mp3Url){
 		mp3: mp3Url,
 		ogg: ''
 	};
+	var po = is_exist(song["mp3"],window.parent.playlist);
+	if(po!=-1){window.parent.switchTrack(po);return;}
 	var ul = window.parent.document.getElementById("playlist");
 
 	if(window.parent.playlist[0]["title"] == "-")
@@ -92,6 +109,8 @@ function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover
 					mp3: rarray[0],
 					ogg: ''
 				};
+				var po = is_exist(song["mp3"],window.parent.playlist);
+				if(po!=-1){window.parent.switchTrack(po);return;}
 				var ul = window.parent.document.getElementById("playlist");
 				if(window.parent.playlist[0]["title"] == "-")
 				{
@@ -141,6 +160,7 @@ function playall_netease_detail(){
 				mp3: detail[i]["mp3Url"],
 				ogg: ''
 			};
+			if(is_exist(song["mp3"],window.parent.playlist)!=-1)continue;
 			window.parent.playlist.push(song);
 			localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
 			var li = document.createElement('li');
@@ -163,6 +183,8 @@ function playsong_netease_detail(id,name,artist,album,cover,mp3Url){
 		mp3: mp3Url,
 		ogg: ''
 	};
+	var po = is_exist(song["mp3"],window.parent.playlist);
+	if(po!=-1){window.parent.switchTrack(po);return;}
 	var ul = window.parent.document.getElementById("playlist");
 	if(window.parent.playlist[0]["title"] == "-")
 	{
@@ -205,3 +227,4 @@ function favorsong(type,id,name,artist,artist_id,album,album_id){
 		}
 	});
 }
+
