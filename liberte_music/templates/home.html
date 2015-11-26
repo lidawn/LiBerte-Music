@@ -31,6 +31,7 @@
 				
 				song = {
 					title: xiami[i]["name"],
+					title_url:"http://www.xiami.com/song/"+xiami[i]["id"],
 					artist: xiami[i]["artist_name"],
 					album: xiami[i]["album_name"],
 					cover:xiami[i]["cover"],
@@ -49,11 +50,13 @@
 		}
 	}
 
-	function playsong1(name,artist,album,cover,mp3Url){
+	function playsong1(id,name,artist,album,cover,mp3Url){
 		//console.log(mp3Url);
 		//console.log(cover);
+		var title_url= "http://www.xiami.com/song/"+id;
 		song = {
 			title: name,
+			title_url:title_url,
 			artist: artist,
 			album: album,
 			cover:cover,
@@ -78,6 +81,15 @@
 		window.parent.switchTrack(length_playlist);
 	}
 	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
+		var title_url;
+		if(type=='n')
+		{
+			title_url = "http://music.163.com/song?id="+id
+		}
+		else
+		{
+			title_url = "http://www.xiami.com/song/"+id
+		}
 		$.ajax({
 			type : "POST",
 			url : "/get_link/",
@@ -89,6 +101,7 @@
 				{
 					song = {
 						title: name,
+						title_url:title_url,
 						artist: artist,
 						album: album,
 						cover:rarray[1],
@@ -215,7 +228,7 @@
   		<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 	</button>
 	</td><td>
-	<button type="button" class="btn btn-default btn-sm" onclick="playsong1('{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">
+	<button type="button" class="btn btn-default btn-sm" onclick="playsong1('{{song.id}}','{{song.name|escapejs}}','{{song.artist_name|escapejs}}','{{song.album_name|escapejs}}','{{song.cover}}','{{song.mp3Url}}')">
   		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
 	</button>
 	</td><td>

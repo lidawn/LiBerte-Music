@@ -7,6 +7,7 @@ var repeat = localStorage.repeat || 0,
 	playlist = [
 		{
 			title: '-',
+			title_url: 'javascript:;',
 			artist: '-',
 			album: '-',
 			cover:'http://img4.duitang.com/uploads/item/201403/30/20140330092939_PtBSc.thumb.600_0.jpeg',
@@ -153,7 +154,7 @@ var repeat = localStorage.repeat || 0,
 		//console.log(item);
 		//console.log(i);
 		$('.cover').html('<img src="'+item.cover+'" alt="'+item.album+'">');
-		$('.tag').html('<strong>'+item.title+'</strong><span class="artist">'+item.artist+'</span><span class="album">'+item.album+'</span>');
+		$('.tag').html('<a target=\"_blank\" href=\"'+item.title_url+'\">'+'<strong>'+item.title+'</strong></a><span class="artist">'+item.artist+'</span><span class="album">'+item.album+'</span>');
 		$('#playlist li').removeClass('playing').eq(i).addClass('playing');
 		audio = newaudio[0];
 		audio.volume = $('.mute').hasClass('enable') ? 0 : volume;

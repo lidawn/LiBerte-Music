@@ -11,6 +11,7 @@
 	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
+		var title_url= "http://www.xiami.com/song/"+id;
 		$.ajax({
 			type : "POST",
 			url : "/get_link/",
@@ -22,6 +23,7 @@
 				{
 					song = {
 						title: name,
+						title_url:title_url,
 						artist: artist,
 						album: rarray[2],
 						cover:rarray[1],
@@ -71,6 +73,7 @@
 	{%  if profile.favor_song_xiami %}
 	<table class="table">
 	<tr>
+		<th>#Play</th>
 		<th>歌曲</th>
 		<th>歌手</th>
 	</tr>

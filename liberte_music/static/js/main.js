@@ -39,8 +39,16 @@ $(document).ready(function(){
 	var playlist_str = localStorage.getItem("playlist");
 	var playlist_ul_str = localStorage.getItem("playlist_ul");
 	var playlist = JSON.parse(playlist_str);
-	window.playlist = playlist;
-	document.getElementById("playlist-ul").innerHTML = playlist_ul_str;
+	if(playlist !=null)
+	{
+		window.playlist = playlist;
+	}
+	
+	if(playlist_ul_str != null)
+	{
+		document.getElementById("playlist-ul").innerHTML = playlist_ul_str;
+	}
+	
 
 	$("#playlist").delegate("li", "click", function(evt) {
 		var _i = $("#playlist li").index($(evt.target));

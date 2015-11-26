@@ -10,6 +10,8 @@
     margin-top: 0px;
 }
 
+#playlist-title { overflow:hidden;background: rgba(0, 0, 0, 0.8); float: right; right:0;width: 50%; height: 30px; margin: 0 auto 0 auto; padding: 10px 15px; list-style: none; position: fixed;}
+#playlist-title a:hover { text-decoration: none;  }
 * { margin: 0; padding: 0; }
 body { font: 14px "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; background: #fff; color: #CC7F13; }
 
@@ -63,7 +65,7 @@ body { font: 14px "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-seri
 .slider .loaded, .slider .pace { position: absolute; height: 100%; opacity: 0.7; -moz-border-radius: 5px; -webkit-border-radius: 5px; -o-border-radius: 5px; -ms-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; }
 .slider .loaded { background: rgba(255, 255, 255, 0.1); }
 .slider .pace { background: #258fb8; }
-#playlist { overflow:auto;background: rgba(0, 0, 0, 0.8); float: right; width: 50%; height: 175px; margin: 0 auto 0 auto; padding: 10px 15px; list-style: none; position: relative; -moz-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); -o-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); }
+#playlist { overflow:auto;background: rgba(0, 0, 0, 0.8); float: right; width: 50%; top:30;height: 145px; margin: 0 auto 0 auto; padding: 10px 15px; list-style: none; position: relative; -moz-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); -o-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); }
 #playlist li { color: #aaa; font-size: 12px; line-height: 2; padding-left: 25px; cursor: pointer; text-overflow: ellipsis; -moz-transition: 0.3s; -webkit-transition: 0.3s; -o-transition: 0.3s; transition: 0.3s; }
 #playlist li:hover { color: #fff; }
 #playlist li.playing { background: url(../images/playing.png) no-repeat 0 center; color: #fff; font-weight: bold; }

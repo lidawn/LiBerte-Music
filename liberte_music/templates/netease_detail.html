@@ -30,6 +30,7 @@
 				
 				song = {
 					title: detail[i]["name"],
+					title_url: "http://music.163.com/song?id="+detail[i]["id"],
 					artist: detail[i]["artist_name"],
 					album: detail[i]["album_name"],
 					cover:detail[i]["cover"],
@@ -46,11 +47,12 @@
 			window.parent.switchTrack(length_playlist);
 		}
 	}
-	function playsong(name,artist,album,cover,mp3Url){
-		console.log(mp3Url);
-		console.log(cover);
+	function playsong(id,name,artist,album,cover,mp3Url){
+		//console.log(mp3Url);
+		//console.log(cover);
 		song = {
 			title: name,
+			title_url:"http://music.163.com/song?id="+id,
 			artist: artist,
 			album: album,
 			cover:cover,
@@ -93,6 +95,7 @@
 	<hr/>
 	<table class="table">
 	<tr>
+		<th>#Play</th>
 		<th>歌曲</th>
 		<th>时长</th>
 		<th>歌手</th>
@@ -102,7 +105,11 @@
 	
 	<tr>
 	<td>
-	<a  href="javascript:;" onclick="playsong('{{song.name}}','{{song.artist_name}}','{{song.album_name}}','{{song.cover}}','{{song.mp3Url}}')">{{song.name}}</a>
+	<button type="button" class="btn btn-default btn-sm" onclick="playsong('{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.album_name}}','{{song.cover}}','{{song.mp3Url}}')">
+  		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+	</button>
+	</td><td>
+	<a  href="http://music.163.com/song?id={{song.id}}" target="_blank">{{song.name}}</a>
 	</td>
 	<td>{{song.duration}}</td>
 	<td><a target="_blank" href="http://music.163.com/artist?id={{song.artist_id}}">{{song.artist_name}}</a></td>
