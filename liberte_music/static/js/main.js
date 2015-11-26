@@ -1,10 +1,10 @@
 
 window.onhashchange = function(){
-	console.log("aa changed!");
+	//console.log("aa changed!");
 	var _url = window.location.href;
 	//访问去除#后的URL
 	_url = _url.replace("/#","");
-	console.log("1 "+_url);
+	//console.log("1 "+_url);
 
 	_iframe = document.getElementById("l_iframe");
 	_iframe.parentNode.removeChild(_iframe);
@@ -25,11 +25,11 @@ window.onhashchange = function(){
 };
 
 window.onresize = function(){
-	console.log("resize");
+	//console.log("resize");
 	var _iframe = document.getElementById("l_iframe");
 	
 	_iframe.height = document.body.clientHeight;
-	console.log(_iframe.height);
+	//console.log(_iframe.height);
 
 	_iframe.scrolling = "auto";
 };
