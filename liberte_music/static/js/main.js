@@ -35,6 +35,14 @@ window.onresize = function(){
 };
 
 $(document).ready(function(){
+	//load playlist
+	var playlist_str = localStorage.getItem("playlist");
+	var playlist_ul_str = localStorage.getItem("playlist_ul");
+	var playlist = JSON.parse(playlist_str);
+	window.playlist = playlist;
+	document.getElementById("playlist-ul").innerHTML = playlist_ul_str;
+
+	//setup iframe
 	var _url = window.location.href;
 	//console.log(document);
 	_url = _url.replace("/#","");

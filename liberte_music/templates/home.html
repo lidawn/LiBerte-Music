@@ -18,6 +18,15 @@
 			
 			var xiami = JSON.parse( xiami_str );
 			var length = xiami.length ;
+			var ul = window.parent.document.getElementById("playlist");
+
+			if(window.parent.playlist[0]["title"] == "-")
+			{
+				window.parent.playlist.shift();
+				var li = ul.childNodes[0];
+				ul.removeChild(li);
+			}
+			var length_playlist = window.parent.playlist.length;
 			for (var i = 0; i < length; i++) {
 				
 				song = {
@@ -28,14 +37,15 @@
 					mp3: xiami[i]["mp3Url"],
 					ogg: ''
 				};
+				
 				window.parent.playlist.push(song);
-				//console.log(playlist);
-				var ul = window.parent.document.getElementById("playlist");
-				//console.log(ul);
+				localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
 				var li = document.createElement('li');
 				li.textContent = song.artist+' - '+song.title;
 				ul.appendChild(li);
-			};
+				localStorage.setItem("playlist_ul",ul.parentNode.innerHTML);
+			}
+			window.parent.switchTrack(length_playlist);
 		}
 	}
 
@@ -50,13 +60,22 @@
 			mp3: mp3Url,
 			ogg: ''
 		};
-		window.parent.playlist.push(song);
-		//console.log(playlist);
 		var ul = window.parent.document.getElementById("playlist");
-		//console.log(ul);
+
+		if(window.parent.playlist[0]["title"] == "-")
+		{
+			window.parent.playlist.shift();
+			var li = ul.childNodes[0];
+			ul.removeChild(li);
+		}
+		var length_playlist = window.parent.playlist.length;
+		window.parent.playlist.push(song);
+		localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
 		var li = document.createElement('li');
 		li.textContent = song.artist+' - '+song.title;
 		ul.appendChild(li);
+		localStorage.setItem("playlist_ul",ul.parentNode.innerHTML);
+		window.parent.switchTrack(length_playlist);
 	}
 	function playsong(is_playable,type,id,name,artist,artist_id,album,album_id,cover){
 		$.ajax({
@@ -76,13 +95,21 @@
 						mp3: rarray[0],
 						ogg: ''
 					};
-					window.parent.playlist.push(song);
-					//console.log(playlist);
 					var ul = window.parent.document.getElementById("playlist");
-					console.log(ul);
+					if(window.parent.playlist[0]["title"] == "-")
+					{
+						window.parent.playlist.shift();
+						var li = ul.childNodes[0];
+						ul.removeChild(li);
+					}
+					var length_playlist = window.parent.playlist.length;
+					window.parent.playlist.push(song);
+					localStorage.setItem("playlist",JSON.stringify(window.parent.playlist));
 					var li = document.createElement('li');
 					li.textContent = song.artist+' - '+song.title;
 					ul.appendChild(li);
+					localStorage.setItem("playlist_ul",ul.parentNode.innerHTML);
+					window.parent.switchTrack(length_playlist);
 				}
 			}
 		});
