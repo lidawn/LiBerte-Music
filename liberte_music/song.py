@@ -55,6 +55,9 @@ def add_to_playlist(request):
 	#收藏歌曲
 	if request.method=="POST":
 		username = request.session.get('username')
+		if not username:
+			return HttpResponse('False')
+
 		user = User.objects.get(username=username)
 		
 		ret = 'False'
@@ -70,6 +73,8 @@ def add_to_playlist(request):
 		print name , artist , artist_id , album,album_id,type,id_
 
 		if type=='n':
+			if not user.bound_netease:
+				return HttpResponse('False')
 			playlist_id = user.netease_playlist
 			netease_cookies = user.netease_cookies
 			netease_cookies  = netease_cookies.replace('\'','\"')
@@ -78,6 +83,8 @@ def add_to_playlist(request):
 			if NU.add_to_playlist(id_,playlist_id,cookies):
 				ret = 'True'
 		elif type=='x':
+			if not user.bound_xiami:
+				return HttpResponse('False')
 			xiami_headers = user.xiami_headers
 			xiami_headers = xiami_headers.replace('\'','\"')
 			dic = json.loads(xiami_headers)

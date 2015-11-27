@@ -1,0 +1,62 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>LiBerte Music</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css">
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/playandfavorfuncs.js"></script>
+</head>
+<body>
+	{% include 'nav.html' %} 
+
+<div class="container">
+	
+	<br/>
+	<div>
+	{%  if profile.detail  %}
+	
+	<input type="hidden" id="taste_xiami" value="{{profile.detail_str}}">
+	<button type="button" class="btn btn-warning btn-sm" style="float:left;" onclick="playall_xiami_taste()">
+  		播放全部
+	</button>
+	
+	<br/>
+	<hr/>
+	<table class="table">
+	<tr>
+		<th>#Play</th>
+		<th>歌曲</th>
+		<th>时长</th>
+		<th>歌手</th>
+		<th>专辑</th>
+	</tr>
+	{% for song in profile.detail %}
+	
+	<tr>
+	<td>
+	<button type="button" class="btn btn-default btn-sm" onclick="playsong_xiami_taste('{{song.id}}','{{song.name}}','{{song.artist_name}}','{{song.album_name}}','{{song.cover}}','{{song.mp3Url}}')">
+  		<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+	</button>
+	</td><td>
+	<a  href="http://www.xiami.com/song/{{song.id}}" target="_blank">{{song.name}}</a>
+	</td>
+	<td>{{song.duration}}</td>
+	<td><a target="_blank" href="http://www.xiami.com/artist/{{song.artist_id}}">{{song.artist_name}}</a></td>
+	<td><a target="_blank" href="http://www.xiami.com/album/{{song.album_id}}">{{song.album_name}}</a></td>
+	</tr>
+	{% endfor %}
+
+	</table>
+	<br/>
+	
+	{% endif %}
+	</div>
+	<br/>
+<div style="height: 150;"></div>
+</div>
+<script src="{{STATIC_URL}}js/iframe.js"></script>
+</body>
+</html>

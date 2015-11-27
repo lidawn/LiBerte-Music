@@ -3,7 +3,10 @@ import requests
 from bs4 import BeautifulSoup as BS
 import re,rsa
 import platform
-
+try:
+    import xml.etree.cElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 
 if platform.system() == 'Darwin':
 	import requests.packages.urllib3.util.ssl_
@@ -162,23 +165,24 @@ class XiamiUser:
 	def get_personal_taste(self,xiami_headers):
 		#可提前把location抓出来
 		personal_taste = []
-		resp = requests.get('http://www.xiami.com/song/playlist-default/cat/json',headers=xiami_headers)
-		#print resp.content
-		taste_list = resp.json().get('data').get('trackList')
-		for taste in taste_list:
-			id_ = taste.get('song_id')
-			name = taste.get('title')
+		#http://www.xiami.com/song/playlist/id/1/type/9
+		resp = requests.get('http://www.xiami.com/song/playlist/id/1/type/9',headers=xiami_headers)
+		root = ET.fromstring(str(resp.content))
+		tracklist = root[0]
+		for track in tracklist:
+			name = track[0].text
+			mp3Url = XiamiSong.decode_link(track[12].text)
 			prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
-			duration = prepend_zero(str(taste.get('length')/60)) + ':' + prepend_zero(str(taste.get('length')%60))
-			artist_id = taste.get('artist_id')
-			artist_name = taste.get('artist')
-			album_id = taste.get('album_id')
-			album_name = taste.get('album_name')
-			cover = taste.get('album_pic')
-			mp3Url = XiamiSong.decode_link(taste.get('location'))
-			#print mp3Url
+			duration = int(track[18].text)
+			duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
+			artist_name = track[9].text
+			artist_id = track[20].text
+			song_id = track[1].text
+			album_name = track[3].text
+			album_id = track[2].text
+			cover = track[17].text
 			result = {
-					'id' : id_,
+					'id' : song_id,
 					'name' : name,
 					'duration' : duration,
 					'artist_name' : artist_name,
@@ -189,6 +193,7 @@ class XiamiUser:
 					'mp3Url' : mp3Url
 			}
 			personal_taste.append(result)
+		
 		return True,personal_taste
 
 	#用headers可以取到

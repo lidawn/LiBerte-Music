@@ -6,6 +6,21 @@ from Netease import NeteaseUser as NU , NeteaseSong as NS
 
 def index(request):
 	if request.method=="GET":
+		xiami_user = XU('a')
+		xiami_user.get_discover()
+		
+		result_xiami = {
+			
+			'daxia' : xiami_user.daxia
+		}
+		results = {
+			
+			'result_xiami' : result_xiami
+		}
+		return render(request,'more.html',{'results':results,})
+
+def index_playlist(request):
+	if request.method=="GET":
 		netease_user = NU('a')
 		netease_user.get_discover()
 		result_netease = {
@@ -24,11 +39,10 @@ def index(request):
 
 		result_xiami = {
 			'new_cd' : xiami_user.new_cd ,
-			'hot_recommend' : xiami_user.hot_recommend,
-			'daxia' : xiami_user.daxia,
+			'hot_recommend' : xiami_user.hot_recommend
 		}
 		results = {
 			'result_netease' : result_netease,
 			'result_xiami' : result_xiami
 		}
-		return render(request,'more.html',{'results':results,})
+		return render(request,'more_playlist.html',{'results':results,})

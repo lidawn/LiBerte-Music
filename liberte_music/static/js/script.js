@@ -262,3 +262,30 @@ var repeat = localStorage.repeat || 0,
 			});
 		}
 	}
+
+	$('#star').on('click', function(){
+		var hh = $(".tag a").attr("href");
+		var type="n";
+		if(hh[7]=="w")type="x";
+		var id_="-1";
+		if(type=="x")
+		{
+			id_ = hh.substring(hh.lastIndexOf("/")+1);
+		}
+		else
+		{
+			id_ = hh.substring(hh.lastIndexOf("=")+1);
+		}
+		$.ajax({
+			type : "POST",
+			url : "/add_to_playlist/",
+			data : {type:type,id:id_},
+			dataType : "text",
+			success : function(ret){
+				if(ret == "True")
+				{
+					console.log("star!");
+				}
+			}
+		});
+	});

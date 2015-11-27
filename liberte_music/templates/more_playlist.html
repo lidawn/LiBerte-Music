@@ -1,0 +1,108 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>逛逛</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
+	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+</head>
+<body>
+	{% include 'nav.html' %} 
+
+<div class="container" style="padding-top:10px;">
+
+	<!-- a 的href 自己抓  不用原生的-->
+
+	<ul class="nav nav-tabs">
+  		<li role="presentation"><a class="fake" href="/#/more/">大虾推荐</a></li>
+  		<li role="presentation" class="active"><a href="javascript:;">新碟歌单</a></li>
+	</ul>
+
+	{% if results.result_netease.hot_recommend %}
+	<h4>热门歌单</h4>
+	<hr/>
+	<div class="row">
+	{% for hot_recommend in results.result_netease.hot_recommend %}
+	<div class="left col-sm-4 col-md-2 ">
+	<div class="thumbnail">
+	<a href="javascipt:;" >
+		<img src="{{hot_recommend.image}}" class="img-circle">
+	</a>
+	<a class="fake" href="/#/netease/playlist/{{hot_recommend.id}}" style="display: block;width:160px;">
+		{{hot_recommend.title}}
+	</a>
+	</div>
+	</div>
+	{% endfor %}
+	{% endif %}
+
+	{% if results.result_xiami.hot_recommend %}
+	{% for hot_recommend in results.result_xiami.hot_recommend %}
+	<div class="left col-sm-4 col-md-2 ">
+	<div class="thumbnail">
+	<a href="javascipt:;" >
+		<img src="{{hot_recommend.image}}" title="点击播放" alt="点击播放" class="img-circle" width="140" height="140">
+	</a>
+	<a class="fake" href="/#/xiami/playlist/{{hot_recommend.id}}" style="display: block;width:160px;">
+		{{hot_recommend.title}}
+	</a>
+	</div>
+	</div>
+	{% endfor %}
+	</div>
+	{% endif %}
+
+
+	{% if results.result_netease.new_cd %}
+	<h4>新碟上架</h4>
+	<hr/>
+	<div class="row">
+	{% for new_cd in results.result_netease.new_cd %}
+	<div class="col-sm-3 col-md-2">
+	<div class="thumbnail-cd" style="width:160px;">
+	<a href="javascipt:;" style="margin-left: 20;">
+		<img src="{{new_cd.image}}"  class="img-circle">
+	</a>
+	<div style="width:150px;overflow:hidden;white-space: nowrap;text-overflow:ellipsis;">
+	<a class="fake" href="/#/netease/album/{{new_cd.id}}" style="display: block;text-overflow:ellipsis;">
+		{{new_cd.title}}
+	</a>
+	</div>
+	<a target="_blank" href="http://music.163.com/artist?id={{new_cd.artist_id}}" style="display: block;text-overflow:ellipsis;">
+		{{new_cd.artist}}
+	</a>
+	</div>
+	</div>
+	{% endfor %}
+	{% endif %}
+
+	{% if results.result_xiami.new_cd %}
+	{% for new_cd in results.result_xiami.new_cd %}
+	<div class="col-sm-3 col-md-2">
+	<div class="thumbnail-cd" style="width:160px;">
+
+	<a href="javascipt:;" style="margin-left: 20;">
+		<img src="{{new_cd.image}}"  class="img-circle" width="100" height="100">
+	</a>
+	<div style="width:150px;overflow:hidden;white-space: nowrap;text-overflow:ellipsis;">
+	<a class="fake" href="/#/xiami/album/{{new_cd.id}}" >
+		{{new_cd.title}}
+	</a>
+	</div>
+	<a target="_blank" href="http://www.xiami.com/artist/{{new_cd.artist_id}}" style="display: block;text-overflow:ellipsis;">
+		{{new_cd.artist}}
+	</a>
+	</div>
+	</div>
+	{% endfor %}
+	</div>
+
+	{% endif %}
+
+<div style="height: 170;"></div>	
+</div>
+<script src="{{STATIC_URL}}js/iframe.js"></script>
+</body>
+</html>

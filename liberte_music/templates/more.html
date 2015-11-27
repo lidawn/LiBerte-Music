@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/style.css">
 	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+	<script src="{{STATIC_URL}}js/playandfavorfuncs.js"></script>
 </head>
 <body>
 	{% include 'nav.html' %} 
@@ -14,79 +15,18 @@
 <div class="container" style="padding-top:10px;">
 
 	<!-- a 的href 自己抓  不用原生的-->
-	{% if results.result_netease.hot_recommend %}
-	<h3>热门歌单</h3>
-	<div class="row">
-	{% for hot_recommend in results.result_netease.hot_recommend %}
-	<div class="col-sm-4 col-md-2">
-	<div class="thumbnail" height="250">
-	<a href="#" onclick="add_song({{hot_recommend.id}})" >
-		<img src="{{hot_recommend.image}}" alt="点击播放" class="img-circle">
-	</a>
-	<a target="_blank" href="http://music.163.com/playlist?id={{hot_recommend.id}}" style="display: block;width:160px;">
-		{{hot_recommend.title}}
-	</a>
-	</div>
-	</div>
-	{% endfor %}
-	{% endif %}
 
-	{% if results.result_xiami.hot_recommend %}
-	{% for hot_recommend in results.result_xiami.hot_recommend %}
-	<div class="col-sm-4 col-md-2">
-	<div class="thumbnail" height="250">
-	<a href="#" onclick="" >
-		<img src="{{hot_recommend.image}}" alt="点击播放" class="img-circle" width="140" height="140">
-	</a>
-	<a target="_blank" href="http://www.xiami.com/collect/{{hot_recommend.id}}" style="display: block;width:160px;">
-		{{hot_recommend.title}}
-	</a>
-	</div>
-	</div>
-	{% endfor %}
-	{% endif %}
-
-
-	{% if results.result_netease.new_cd %}
-	<h3>新碟上架</h3>
-	<div class="row">
-	{% for new_cd in results.result_netease.new_cd %}
-	<div class="col-sm-2">
-	<a href="#" onclick="" >
-		<img src="{{new_cd.image}}" alt="点击播放" class="img-circle">
-	</a>
-	<a target="_blank" href="http://music.163.com/album?id={{new_cd.id}}" style="display: block;width:120px;">
-		{{new_cd.title}}
-	</a>
-	<a target="_blank" href="http://music.163.com/artist?id={{new_cd.artist_id}}" style="display: block;width:120px;">
-		{{new_cd.artist}}
-	</a>
-	</div>
-	{% endfor %}
-	{% endif %}
-
-	{% if results.result_xiami.new_cd %}
-	{% for new_cd in results.result_xiami.new_cd %}
-	<div class="col-sm-2">
-	<a href="#" onclick="" >
-		<img src="{{new_cd.image}}" alt="点击播放" class="img-circle" width="100" height="100">
-	</a>
-	<a target="_blank" href="http://www.xiami.com/album/{{new_cd.id}}" style="display: block;width:120px;">
-		{{new_cd.title}}
-	</a>
-	<a target="_blank" href="http://www.xiami.com/artist/{{new_cd.artist_id}}" style="display: block;width:120px;">
-		{{new_cd.artist}}
-	</a>
-	</div>
-	{% endfor %}
-	</div>
-
-	{% endif %}
+	<ul class="nav nav-tabs">
+  		<li role="presentation"  class="active"><a href="javascript:;">大虾推荐</a></li>
+  		<li role="presentation"><a class="fake" href="/#/more/playlist/">新碟歌单</a></li>
+	</ul>
+	<br/>
 
 	{% if results.result_xiami.daxia %}
-	<h3>滚动电台</h3>
-	<table>
+
+	<table class="table">
 		<tr>
+			<th>#Play</th>
 			<th>歌曲</th>
 			<th>艺人</th>
 			<th>上榜理由</th>
@@ -94,10 +34,15 @@
 		</tr>
 	{% for daxia in results.result_xiami.daxia %}
 	<tr>
-		<td><a target="_blank" href="http://www.xiami.com/song/{{daxia.id}}">{{daxia.name}}</a></td>
-		<td><a target="_blank" href="http://www.xiami.com/search/artist?key={{daxia.artist}}">{{daxia.artist}}</a></td>
-		<td>{{daxia.reason}}</td>
-		<td>{{daxia.time}}</td>
+		<td width="10%">
+		<button type="button" class="btn btn-default btn-sm" onclick="playsong('True','x','{{daxia.id}}','{{daxia.name|escapejs}}','{{daxia.artist|escapejs}}','-1','unknown','-1','cover')" aria-hidden="true"></span>
+			<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+		</button>
+		</td>
+		<td width="10%"><a target="_blank" href="http://www.xiami.com/song/{{daxia.id}}">{{daxia.name}}</a></td>
+		<td width="10%"><a target="_blank" href="http://www.xiami.com/search/artist?key={{daxia.artist}}">{{daxia.artist}}</a></td>
+		<td width="60%">{{daxia.reason}}</td>
+		<td width="10%">{{daxia.time}}</td>
 	</tr>
 	{% endfor %}
 	</table>
