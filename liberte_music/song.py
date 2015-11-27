@@ -47,7 +47,7 @@ def get_link(request):
 				#网易有源
 				link = NS.get_link(str(ids['id']),str(ids['album_id']),False)
 			
-	print link
+	#print link
 	return HttpResponse(link)
 
 @csrf_exempt
@@ -70,7 +70,7 @@ def add_to_playlist(request):
 		type = request.POST.get('type')
 		id_ = request.POST.get('id')
 
-		print name , artist , artist_id , album,album_id,type,id_
+		#print name , artist , artist_id , album,album_id,type,id_
 
 		if type=='n':
 			if not user.bound_netease:
