@@ -15,12 +15,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^search/','liberte_music.search.search'),
+    url(r'^parse/','liberte_music.parse.parse'),
     url(r'^get_link/','liberte_music.song.get_link'),
     url(r'^get_playlist_links/','liberte_music.song.get_playlist_links'),
     url(r'^add_to_playlist/','liberte_music.song.add_to_playlist'),
-    url(r'^more/$','liberte_music.views.index'),
-    url(r'^more/playlist/$','liberte_music.views.index_playlist'),
     url(r'^bound/xiami/taobao/$','liberte_music.bounder.bound_xiami_taobao'),
     url(r'^bound/xiami/$','liberte_music.bounder.bound_xiami'),
     url(r'^unbound/xiami/$','liberte_music.bounder.unbound_xiami'),
@@ -44,11 +42,6 @@ urlpatterns = patterns('',
     url(r'^xiami/album/(?P<id_>\d+)/$','liberte_music.detail.xiami_album'),
     url(r'^netease/album/(?P<id_>\d+)/$','liberte_music.detail.netease_album'),
    
-    #test
-   #url(r'^test_put/$','liberte_music.song.test_put'),
-    #url(r'^test_get/$','liberte_music.song.test_get'),
-    #url(r'^test_open/$','liberte_music.song.test_open'),
-    #url(r'^add_song/$','liberte_music.song.add_song'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
