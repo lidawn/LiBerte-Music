@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from Xiami import XiamiUser as XU , XiamiSong as XS
 
-def search(request):
+def parse(request):
 	if request.method=="GET":
 		if 'keywords' in request.GET :
 			keywords = request.GET.get('keywords',None)
@@ -12,4 +12,4 @@ def search(request):
 				results = XU.search(keywords)
 				return render(request,'search.html',{'results':results,})
 		
-	return render(request,'search.html')
+	return render(request,'parse.html')

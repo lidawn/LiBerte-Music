@@ -23,19 +23,11 @@ url = 'https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntranc
 bs = BS(requests.get(url).content)
 
 class XiamiUser:
-	'''虾米用户'''
-	hot_recommend = []		#精选集
-	new_cd = []				#新碟首发
-	daxia = []				#大虾推荐
-	
+	'''虾米用户'''	
 	bs = bs
 	#http://www.xiami.com/index/recommend  猜你喜欢
 	def __init__(self,username):
 		self._username = username
-		self._session = requests.Session()
-
-	def get_session(self):
-		return self._session
 
 	def login_with_xiami(self,password):
 		'''用虾米账号登录'''
@@ -75,126 +67,6 @@ class XiamiUser:
 			}
 
 		return message
-
-	def login_with_taobao(self,password,captcha):
-		'''用淘宝账号登录
-		'''
-		check_url = 'https://passport.alipay.com/newlogin/account/check.do?fromSite=0'
-		check_data = {
-			'loginId': self._username,
-			'appName': 'xiami',
-			'appEntrance': 'taobao',
-		}
-		message = {
-					'status' : False,
-					'titleMsg' : '发生错误',
-					'captcha_url' : None
-		}
-		ret = self._session.post(check_url,data=check_data,headers=headers)
-		rsa_n = int(self.bs.find('input', {"id": "fm-modulus"}).get('value'), base=16)
-		rsa_e = 65537
-		public_key = rsa.PublicKey(rsa_n, rsa_e)
-		encrypted_password = rsa.encrypt(password.encode('utf-8'), public_key).encode('hex')
-		data = {
-			'loginId': self._username,
-			'password2': encrypted_password,
-			'appName': 'xiami',
-			'appEntrance': 'taobao',
-			'hsid': self.bs.find('input', {'name': 'hsid'})['value'],
-			'cid': self.bs.find('input', {'name': 'cid'})['value'],
-			'rdsToken': self.bs.find('input', {'name': 'rdsToken'})['value'],
-			'umidToken': self.bs.find('input', {'name': 'umidToken'})['value'],
-			'_csrf_token': self.bs.find('input', {'name': '_csrf_token'})['value'],
-			'checkCode':captcha
-		}
-
-		#print 'data',data
-		headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
-
-		ret = self._session.post('https://passport.alipay.com/newlogin/login.do?fromSite=0',headers=headers,data=data)
-		if ret.text == '':
-			
-			return message
-		ret = ret.json()
-		# 验证码
-		print ret['content']
-		if ret['content']['status'] == -1:
-			if ret['content'].get('data', {}).get('checkCodeLink'):
-				message = {
-					'status' : False,
-					'titleMsg' : ret['content']['data'].get('titleMsg', ''),
-					'captcha_url' : ret['content']['data'].get('checkCodeLink')
-				}
-		else:
-			#登录成功, 将 st 传递给虾米
-			st = ret['content']['data']['st']
-			headers['Referer'] = 'https://passport.alipay.com/mini_login.htm'
-			ret = self._session.get('http://www.xiami.com/accounts/back?st=' + st,headers=headers)
-
-			resp = self._session.get('http://www.xiami.com/account',headers=headers)
-			content = BS(resp.content)
-
-			#虾米返回的是header
-			xiami_header = {}
-			if content.find('div',class_='account'):
-				nickname = content.find('div',class_='account').find('a',class_='avatar').get('title')
-				#是herf
-				uid = content.find('div',class_='account').find('a',class_='avatar').get('herf')[3:]
-				xiami_header = resp.request.headers
-				for key in resp.cookies.keys():
-					xiami_header[key] = resp.cookies[key]
-				#for key in resp.cookies.keys():
-				#	xiami_cookie[key] = resp.cookies[key]
-				message = {
-					'status' : True,
-					'titleMsg' : None,
-					'captcha_url' : None,
-					'nickname' : nickname,
-					'uid' : uid,
-					'xiami_header':str(xiami_header)
-				}
-			else:
-				message = {
-					'status' : False,
-					'titleMsg' : '发生错误',
-					'captcha_url' : None
-				}
-		return message
-	
-	#用header
-	def get_personal_taste(self,xiami_headers):
-		#可提前把location抓出来
-		personal_taste = []
-		#http://www.xiami.com/song/playlist/id/1/type/9
-		resp = requests.get('http://www.xiami.com/song/playlist/id/1/type/9',headers=xiami_headers)
-		root = ET.fromstring(str(resp.content))
-		tracklist = root[0]
-		for track in tracklist:
-			name = track[0].text
-			mp3Url = XiamiSong.decode_link(track[12].text)
-			prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
-			duration = int(track[18].text)
-			duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
-			artist_name = track[9].text
-			artist_id = track[20].text
-			song_id = track[1].text
-			album_name = track[3].text
-			album_id = track[2].text
-			cover = track[17].text
-			result = {
-					'id' : song_id,
-					'name' : name,
-					'duration' : duration,
-					'artist_name' : artist_name,
-					'artist_id' : artist_id,
-					'album_name' : album_name,
-					'album_id' : album_id,
-					'cover' : cover,
-					'mp3Url' : mp3Url
-			}
-			personal_taste.append(result)
-		
-		return True,personal_taste
 
 	#用headers可以取到
 	def get_favor_song(self,xiami_headers,page):
@@ -268,12 +140,6 @@ class XiamiUser:
 			return True
 		return False
 
-	def set_favor_album(self):
-		pass
-
-	def set_favor_artist(self):
-		pass
-
 	@classmethod
 	def search(cls,keywords):
 		return cls.get_search_result('song',keywords,40)			#单曲
@@ -342,88 +208,6 @@ class XiamiUser:
 			results = content.find('div',class_='search_result_box')
 
 		return search_results
-
-	@classmethod
-	def get_discover(cls):
-		cls.hot_recommend = []
-		cls.new_cd = []
-		cls.daxia = []
-
-		URL = 'http://www.xiami.com'
-		resp = requests.get(URL,headers=headers)
-		content = BS(resp.content)
-		cd_list = content.find('div',id='albums').find('div',class_='content_block').find_all('div',class_='album')
-		for cd in cd_list:
-			a = cd.find('div',class_='info').find_all('p')
-			image = cd.find('div',class_='image').find('img').get('src')
-			title = a[0].find('a').string
-			id_ = a[0].find('a').get('href')[7:]
-			artist = a[1].find('a').string
-			artist_id = a[1].find('a').get('href')[8:]
-			result = {
-				'title' : title,
-				'image' : image,
-				'id' : id_,
-				'artist' : artist,
-				'artist_id' : artist_id
-			}
-			cls.new_cd.append(result)
-
-		URL = 'http://www.xiami.com/index/collect'
-		resp = requests.get(URL,headers=headers)
-		#print resp.json().get('data').get('collects')
-		content = BS(resp.json().get('data').get('collects'))
-	
-		hot_list = content.find_all('div',class_='collect')
-		for hot in hot_list:
-			image = hot.find('div',class_='image').find('img').get('src')
-			a = hot.find('div',class_='info').find('p',class_='name').find('a')
-			title = a.string
-			id_ = a.get('href')[9:]
-			result = {
-				'image' : image,
-				'title' : title,
-				'id' : id_
-			}
-			cls.hot_recommend.append(result)
-		#大虾
-		content = BS(resp.json().get('data').get('charts'))
-		daxia_list = content.find('table').find_all('tr')
-		for daxia in daxia_list:
-			if daxia.get('data-index',None) is None:
-				continue
-			a = daxia.find('td',class_='song_block').find_all('p')
-			name = a[0].find('a').string
-			id_ = a[0].find('a').get('href')[6:]
-			artist = a[1].find('a').string
-			reason = daxia.find('td',class_='common_block').find('p').string
-			time = daxia.find('td',class_='time_block').find('p').string
-			result = {
-				'name' : name,
-				'id' : id_,
-				'artist' : artist,
-				'reason' : reason,
-				'time' : time
-			}
-			cls.daxia.append(result)
-		#customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li')
-		##print customized_list
-		#for customized in customized_list:
-		#	if customized.get('data-res-action',None) is None:
-		#		continue 
-		#	image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
-		#	a = customized.find('p',class_='dec f-brk').find('a')
-		#	title = a.string
-		#	id_ = a.get('href')[a.get('href').find('=')+1:]
-		#	description = customized.find('p',class_='idv f-brk s-fc4').get('title')
-		#	result = {
-		#		'image' : image,
-		#		'title' : title,
-		#		'id' : id_,
-		#		'description' : description
-		#	}
-		#	self._personal_customized.append(result)
-		#print resp.content
 
 class XiamiSong:
 	def __init__(self,id_,name,is_favored,is_playable):
@@ -527,6 +311,3 @@ class XiamiSong:
 				real_url = real_url[0:index] + '=' + real_url[index+3:]
 				
 		return real_url
-
-
-		

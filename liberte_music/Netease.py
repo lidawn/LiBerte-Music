@@ -98,81 +98,9 @@ class NeteaseUser:
 			}
 		return message
 
-	def get_personal_customized(self,cookies):
-		URL = 'http://music.163.com/discover'
-		#需要实时登录 POST请求
-		URL_recommmed = 'http://music.163.com/weapi/discovery/recommend/resource'
-		#cookie 传进来是个字典
-		cookies['appver'] = '2.0.2'
-		resp = requests.get(URL,headers=headers,cookies=cookies)
-		content = BS(resp.content)
-		#f = open("text.txt","a")
-		#f.write(resp.content)
-		#f.close()
-		customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li',{"data-res-action":"log"})
-		##print customized_list
-		personal_customized = []
-
-		for customized in customized_list:
-			#print customized.string,
-			if customized.get('data-res-action',None) is None:
-				continue
-			image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
-			a = customized.find('p',class_='dec f-brk').find('a')
-			title = a.string
-			id_ = a.get('href')[a.get('href').find('=')+1:]
-			description = customized.find('p',class_='idv f-brk s-fc4').get('title')
-			result = {
-				'image' : image,
-				'title' : title,
-				'id' : id_,
-				'description' : description
-			}
-			personal_customized.append(result)
-		return True,personal_customized
-
-	def get_personal_taste(self,cookies):
-		#cookie 传进来是个字典
-		cookies['appver'] = '2.0.2'
-		resp = requests.get('http://music.163.com/discover/recommend/taste',cookies=cookies,headers=headers)
-		content = BS(resp.content)
-		f = open("text.txt","a")
-		f.write(resp.content)
-		f.close()
-		taste_list = content.find('div',class_='n-songtb n-songtb-1 j-flag').find('tbody').find_all('tr')
-		#print 'taste_list',taste_list
-		personal_taste = []
-		for taste in taste_list:
-			id_ = taste.get('data-id')
-			#print id_,
-			infos  = taste.find_all('td')
-			#print infos
-			name = infos[1].find('a').string
-			duration = infos[2].string
-			get_id = lambda x : x[x.find('=')+1:]
-			if infos[3].find('a'):
-				artist_name = infos[3].find('a').string
-				artist_id = get_id(infos[3].find('a').get('href'))
-			else:
-				artist_name = infos[3].find('span').string
-				artist_id = '-1'
-			album_name = infos[4].find('a').string
-			album_id = get_id(infos[4].find('a').get('href'))
-
-			result = {
-				'id' : id_,
-				'name' : name,
-				'duration' : duration,
-				'artist_name' : artist_name,
-				'artist_id' : artist_id,
-				'album_name' : album_name,
-				'album_id' : album_id
-			}
-			personal_taste.append(result)
-		return True,personal_taste
-
 	@staticmethod
 	def add_to_playlist(track_id,playlist_id,cookies):
+		'''收藏至默认列表'''
 		#cookie 传进来是个字典
 		cookies['appver'] = '2.0.2'
 		data = {
@@ -190,6 +118,7 @@ class NeteaseUser:
 
 	@classmethod
 	def search(cls,keywords):
+		'''搜索'''
 		return cls.get_search_result('1',keywords,'100')			#单曲
 		#self.get_search_result(10,keywords)			#专辑
 		#self.get_search_result(100,keywords)		#歌手
@@ -234,49 +163,9 @@ class NeteaseUser:
 			song_list.append(song_result)
 		return song_list
 
-	@classmethod
-	def get_discover(cls):
-		cls.hot_recommend = []
-		cls.new_cd = []
-
-		URL = 'http://music.163.com/discover'
-		resp = requests.get(URL,headers=headers)
-		content = BS(resp.content)
-		hot_list = content.find('ul',class_='m-cvrlst f-cb').find_all('li')
-		for hot in hot_list:
-			image = hot.find('div',class_='u-cover u-cover-1').find('img').get('src')
-			a = hot.find('p',class_='dec').find('a')
-			title = a.get('title')
-			id_ = a.get('href')[a.get('href').find('=')+1:]
-			result = {
-				'image' : image,
-				'title' : title,
-				'id' : id_
-			}
-			cls.hot_recommend.append(result)
-
-		cd_list = content.find('div',class_='n-disk').find_all('ul',class_='f-cb roller-flag')
-		for cds in cd_list:
-			for cd in cds.find_all('li'):
-				a = cd.find_all('p',class_='f-thide')
-				image = cd.find('img').get('data-src')
-				title = a[0].find('a').string
-				id_ = a[0].find('a').get('href')[a[0].find('a').get('href').find('=')+1:]
-				artist = a[1].find('a').string
-				artist_id = a[1].find('a').get('href')[a[1].find('a').get('href').find('=')+1:]
-				result = {
-					'title' : title,
-					'image' : image,
-					'id' : id_,
-					'artist' : artist,
-					'artist_id' : artist_id
-				}
-				cls.new_cd.append(result)
-
-		#print resp.content
-
 	@staticmethod
 	def get_favor_song(uid):
+		'''个人收藏'''
 		resp = requests.get('http://music.163.com/api/user/playlist/?uid=%s&offset=0&limit=100'%str(uid),headers=headers,cookies=cookies)
 		song_list = []
 		status = True

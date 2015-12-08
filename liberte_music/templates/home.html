@@ -1,4 +1,4 @@
-<!--该页面的歌曲默认全部是能够播放的-->
+
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -20,7 +20,6 @@
 	{% endif %}
 	
 	<ul class="nav nav-tabs">
-  		<li role="presentation"  class="active"><a href="javascript:;">今日推荐</a></li>
   		{% if profile.bound_netease %}
   		<li role="presentation"><a class="fake" href="/#/home/netease/">网易收藏</a></li>
   		{% endif %}
@@ -100,9 +99,7 @@
 	<br/>
 	{% else %}
 	<h3>请绑定<a class="fake" href="/#/bound/netease/">网易云音乐</a>或者
-	<a class="fake" href="/#/bound/xiami/">虾米</a>
-	<a class="fake" style="color: red;" href="javascript:;">(淘宝..坏掉了)</a>
-	音乐
+	<a class="fake" href="/#/bound/xiami/">虾米音乐</a>
 	</h3>
 	{% endif %}
 	</div>
