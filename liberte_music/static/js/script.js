@@ -1,4 +1,4 @@
-﻿
+
 var repeat = localStorage.repeat || 0,
 	shuffle = localStorage.shuffle || 'false',
 	continous = true,
@@ -40,7 +40,7 @@ var repeat = localStorage.repeat || 0,
 		clearInterval(updateProgress);
 		isPlaying = false;
 	}
-
+	
 	// Update progress
 	var setProgress = function(value){
 		var currentSec = parseInt(value%60) < 10 ? '0' + parseInt(value%60) : parseInt(value%60),
@@ -229,7 +229,7 @@ var repeat = localStorage.repeat || 0,
 			$(this).addClass('enable');
 		}
 	});
-	
+
 	function clear_playlist()
 	{
 		if(playlist[0]['title'] !='-')

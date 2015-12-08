@@ -6,6 +6,7 @@ from Xiami import XiamiUser as XU , XiamiSong as XS
 from Netease import NeteaseUser as NU , NeteaseSong as NS
 from models import User
 import json
+#输出爆炸了！！！！！
 
 @csrf_exempt
 def get_link(request):
@@ -38,7 +39,7 @@ def get_link(request):
 			if id_:
 				#虾米有源
 				link = XS.get_link(id_,False)
-			
+
 		elif type_=='x' and is_playable=='False':
 			#解决虾米不能播放的问题
 			ids = NS.parse_id(name,artist,' ')
@@ -46,7 +47,7 @@ def get_link(request):
 			if ids:
 				#网易有源
 				link = NS.get_link(str(ids['id']),str(ids['album_id']),False)
-			
+
 	#print link
 	return HttpResponse(link)
 
@@ -59,7 +60,7 @@ def add_to_playlist(request):
 			return HttpResponse('False')
 
 		user = User.objects.get(username=username)
-		
+
 		ret = 'False'
 
 		name = request.POST.get('name')
@@ -79,7 +80,7 @@ def add_to_playlist(request):
 			netease_cookies = user.netease_cookies
 			netease_cookies  = netease_cookies.replace('\'','\"')
 			cookies = json.loads(netease_cookies)
-			
+
 			if NU.add_to_playlist(id_,playlist_id,cookies):
 				ret = 'True'
 		elif type=='x':

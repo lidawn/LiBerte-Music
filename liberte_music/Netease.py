@@ -5,9 +5,9 @@ import json,os,base64
 from Crypto.Cipher import AES
 import hashlib
 
-user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64) 
-						AppleWebKit/537.36 (KHTML, like Gecko) 
-						Chrome/46.0.2490.80 
+user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64)
+						AppleWebKit/537.36 (KHTML, like Gecko)
+						Chrome/46.0.2490.80
 						Safari/537.36
 			'''
 headers = {
@@ -26,7 +26,7 @@ cookies = {'appver':'2.0.2'}
 #这个类定义貌似没有必要
 class NeteaseUser:
 	'''网易用户'''
-	
+
 	hot_recommend = []		#热门推荐    #后面个性定制五个标签
 	new_cd = []				#新碟上架
 
@@ -50,7 +50,7 @@ class NeteaseUser:
 		text = text[::-1]
 		rs = int(text.encode('hex'), 16)**int(pubKey, 16)%int(modulus, 16)
 		return format(rs, 'x').zfill(256)
-	
+
 	@staticmethod
 	def createSecretKey(size):
 		return (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(size))))[0:16]
@@ -78,7 +78,7 @@ class NeteaseUser:
 
 		resp = self._session.post(URL,data=post_data,headers=headers,cookies=cookies)
 		netease_cookie = {}
-		
+
 		if resp.content.find('account') !=-1:
 			self._uid = resp.json().get('account').get('id')
 			self._nickname = resp.json().get('profile').get('nickname')
@@ -112,11 +112,11 @@ class NeteaseUser:
 		customized_list = content.find('ul',class_='m-cvrlst m-cvrlst-idv f-cb').find_all('li',{"data-res-action":"log"})
 		##print customized_list
 		personal_customized = []
-		
+
 		for customized in customized_list:
 			#print customized.string,
 			if customized.get('data-res-action',None) is None:
-				continue 
+				continue
 			image = customized.find('div',class_='u-cover u-cover-1').find('img').get('src')
 			a = customized.find('p',class_='dec f-brk').find('a')
 			title = a.string
@@ -136,9 +136,9 @@ class NeteaseUser:
 		cookies['appver'] = '2.0.2'
 		resp = requests.get('http://music.163.com/discover/recommend/taste',cookies=cookies,headers=headers)
 		content = BS(resp.content)
-		#f = open("text.txt","a")
-		#f.write(resp.content)
-		#f.close()
+		f = open("text.txt","a")
+		f.write(resp.content)
+		f.close()
 		taste_list = content.find('div',class_='n-songtb n-songtb-1 j-flag').find('tbody').find_all('tr')
 		#print 'taste_list',taste_list
 		personal_taste = []
@@ -185,7 +185,7 @@ class NeteaseUser:
 		if resp.status_code ==200:
 			return True
 		return False
-		
+
 		#return True,personal_taste
 
 	@classmethod
@@ -283,7 +283,7 @@ class NeteaseUser:
 		try:
 			playlists = resp.json().get('playlist')
 			#print playlists
-			
+
 			for playlist in playlists:
 				song = {}
 				song['name'] = playlist.get('name')
@@ -299,7 +299,7 @@ class NeteaseUser:
 		return status,song_list
 
 class NeteaseSong:
-	
+
 	def __init__(self,id_,album_id,name,is_favored,is_playable):
 		self._id = id_
 		self._album_id = album_id
@@ -314,7 +314,7 @@ class NeteaseSong:
 			name = name[0:name.find("-")]
 		if name.find("(") !=-1:
 			name = name[0:name.find("(")]
-		#print 'name',name 
+		#print 'name',name
 		keywords = name+' '+ artist+' '+album
 		song_list = NeteaseUser.get_search_result('1',keywords,'1')
 		if song_list is None:
@@ -323,7 +323,7 @@ class NeteaseSong:
 			'id' : song_list[0].get('song_id'),
 			'album_id' : song_list[0].get('song_album_id')
 		}
-		
+
 		return ids
 
 	@classmethod
