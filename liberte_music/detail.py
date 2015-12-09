@@ -18,7 +18,60 @@ user_agent = '''Mozilla/5.0 (Windows NT 10.0; WOW64)
 						Safari/537.36
 			'''
 
-def netease_playlist(request,id_):
+def netease_song(id_):
+	headers = {
+		'user-Agent':user_agent,
+		'connection':'keep-alive',
+		'Referer':'http://music.163.com/',
+		'Accept': '*/*',
+		'Accept-Encoding': 'gzip,deflate,sdch',
+		'Accept-Language': 'zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4',
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Host': 'music.163.com'
+	}
+
+	cookies = {'appver':'2.0.2'}
+
+	URL = 'http://music.163.com/api/song/detail?ids=[' + id_+']'
+	resp = requests.get(URL,cookies=cookies,headers=headers)
+	song_list = []
+	try:
+		content = resp.json() 
+		song = content['songs'][0]
+		print song
+		duration = song.get('duration')/1000
+		prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
+		duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
+		name = song.get('name')
+		id_ = song.get('id')
+		artist_name = song.get('artists')[0].get('name')
+		artist_id = song.get('artists')[0].get('id')
+		album_name = song.get('album').get('name')
+		album_id = song.get('album').get('id')
+		cover = song.get('album').get('blurPicUrl')
+		mp3Url = song.get('mp3Url')
+		result = {
+			'id' : id_,
+			'name' : name,
+			'duration' : duration,
+			'artist_name' : artist_name,
+			'artist_id' : artist_id,
+			'album_name' : album_name,
+			'album_id' : album_id,
+			'cover' : cover,
+			'mp3Url' : mp3Url
+		}
+		song_list.append(result)
+		results = {
+			'song_list' : song_list,
+			'song_list_str' : json.dumps(song_list)
+		}
+	except:
+		results = None
+
+	return results
+
+def netease_playlist(id_):
 	'''网易歌单详情'''
 	#id_是字符串
 	#print id_
@@ -35,37 +88,29 @@ def netease_playlist(request,id_):
 
 	cookies = {'appver':'2.0.2'}
 
-	URL = 'http://music.163.com/playlist?id=' + id_
+	#URL = 'http://music.163.com/playlist?id=' + id_
+	URL = 'http://music.163.com/api/playlist/detail?id=' + id_
 	resp = requests.get(URL,cookies=cookies,headers=headers)
-	content = BS(resp.content)
-	
-	playlist_str = str(content.find('textarea'))[32:]
-	playlist_str = playlist_str[ : playlist_str.rfind('<')]
-	#print playlist_str[125200:125246]
-	#playlist_str = playlist_str.replace('\'','\"')
-	#print playlist_str[125211:125246]
-	playlist = json.loads(playlist_str)
-	song_list = []
-	for song in playlist:
-
-		name = song.get('name')
-		duration = song.get('duration')/1000
-		prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
-		duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
-		id_ = song.get('id')
-		artist_name = song.get('artists')[0].get('name')
-		artist_id = song.get('artists')[0].get('id')
-		if song.get('album') is None:
-			album_name = 'unknown'
-			album_id = 'unknown'
-			album_id = 'cover'
-		else:
+	#print resp.content
+	try:
+		content = resp.json() 
+		playlist = content.get('tracks',None)
+		if playlist is None:
+			playlist = content['result']['tracks']
+		song_list = []
+		for song in playlist:
+			duration = song.get('duration')/1000
+			prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
+			duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
+			name = song.get('name')
+			id_ = song.get('id')
+			artist_name = song.get('artists')[0].get('name')
+			artist_id = song.get('artists')[0].get('id')
 			album_name = song.get('album').get('name')
 			album_id = song.get('album').get('id')
 			cover = song.get('album').get('blurPicUrl')
-		mp3Url = song.get('mp3Url')
-
-		result = {
+			mp3Url = song.get('mp3Url')
+			result = {
 				'id' : id_,
 				'name' : name,
 				'duration' : duration,
@@ -75,17 +120,19 @@ def netease_playlist(request,id_):
 				'album_id' : album_id,
 				'cover' : cover,
 				'mp3Url' : mp3Url
+			}
+			print result
+			song_list.append(result)
+		results = {
+			'song_list' : song_list,
+			'song_list_str' : json.dumps(song_list)
 		}
-		song_list.append(result)
+	except:
+		results = None
 
-	profile = {
-		'detail' : song_list,
-		'detail_str' : json.dumps(song_list)
-	}
+	return results
 
-	return render(request,'netease_detail.html',{'profile':profile,})
-
-def netease_album(request,id_):
+def netease_album(id_):
 	headers = {
 		'user-Agent':user_agent,
 		'connection':'keep-alive',
@@ -99,35 +146,26 @@ def netease_album(request,id_):
 
 	cookies = {'appver':'2.0.2'}
 
-	URL = 'http://music.163.com/album?id=' + id_
+	URL = 'http://music.163.com/api/album/' + id_
 	resp = requests.get(URL,cookies=cookies,headers=headers)
-	content = BS(resp.content)
+	try:
+		content = resp.json() 
+		playlist = content['album']['songs']
+		song_list = []
+		for song in playlist:
 
-	playlist_str = str(content.find('textarea'))[32:]
-	playlist_str = playlist_str[ : playlist_str.rfind('<')]
-	#print playlist_str[125200:125246]
-	#playlist_str = playlist_str.replace('\'','\"')
-	#print playlist_str[125211:125246]
-	playlist = json.loads(playlist_str)
-	song_list = []
-	for song in playlist:
-		name = song.get('name')
-		duration = song.get('duration')/1000
-		prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
-		duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
-		id_ = song.get('id')
-		artist_name = song.get('artists')[0].get('name')
-		artist_id = song.get('artists')[0].get('id')
-		if song.get('album') is None:
-			album_name = 'unknown'
-			album_id = 'unknown'
-			album_id = 'cover'
-		else:
+			duration = song.get('duration')/1000
+			prepend_zero = lambda x : ('0'+x) if (len(x)==1) else x
+			duration = prepend_zero(str(duration/60)) + ':' + prepend_zero(str(duration%60))
+			name = song.get('name')
+			id_ = song.get('id')
+			artist_name = song.get('artists')[0].get('name')
+			artist_id = song.get('artists')[0].get('id')
 			album_name = song.get('album').get('name')
 			album_id = song.get('album').get('id')
 			cover = song.get('album').get('blurPicUrl')
-		mp3Url = song.get('mp3Url')
-		result = {
+			mp3Url = song.get('mp3Url')
+			result = {
 				'id' : id_,
 				'name' : name,
 				'duration' : duration,
@@ -137,13 +175,17 @@ def netease_album(request,id_):
 				'album_id' : album_id,
 				'cover' : cover,
 				'mp3Url' : mp3Url
+			}
+			song_list.append(result)
+			#print song_list
+		results = {
+			'song_list' : song_list,
+			'song_list_str' : json.dumps(song_list)
 		}
-		song_list.append(result)
-	profile = {
-		'detail' : song_list,
-		'detail_str' : json.dumps(song_list)
-	}
-	return render(request,'netease_detail.html',{'profile':profile,})
+	except:
+		results = None
+
+	return results
 
 def xiami_playlist(request,id_):
 	URL = 'http://www.xiami.com/song/playlist/id/%s/type/3' % id_

@@ -16,9 +16,9 @@
 	
 	<br/>
 	<div>
-	{%  if profile.detail  %}
+	{%  if response.status  %}
 	
-	<input type="hidden" id="detail" value="{{profile.detail_str}}">
+	<input type="hidden" id="detail" value="{{response.results.song_list_str}}">
 	<button type="button" class="btn btn-danger btn-sm" style="float:left;" onclick="playall_netease_detail()">
   		播放全部
 	</button>
@@ -33,7 +33,7 @@
 		<th>歌手</th>
 		<th>专辑</th>
 	</tr>
-	{% for song in profile.detail %}
+	{% for song in response.results.song_list %}
 	
 	<tr>
 	<td>

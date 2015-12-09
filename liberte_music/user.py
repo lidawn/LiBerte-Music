@@ -114,12 +114,12 @@ def user_home(request):
 	'''展示用户收藏'''
 	profile = {'status':True,'titleMsg':'发生错误'}
 	if request.method=="GET":
-		if request.session.get('is_login',False):
+		#if request.session.get('is_login',False):
 			
-			return render(request,'home.html',{'profile':profile,})
+		return render(request,'home.html',{'profile':profile,})
 			
-		else:
-			return HttpResponseRedirect('/login/')
+		#else:
+		#	return HttpResponseRedirect('/login/')
 		
 	return HttpResponseRedirect('/login/')
 
